@@ -1,9 +1,15 @@
+/**
+ * @branch feature/modern-ai-dashboard-ui
+ * @history 2026-07-03 — Tests updated for ThemeProvider wrapper
+ */
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { SummaryCards } from '../components/SummaryCards';
 import { TaskForm } from '../components/TaskForm';
+import { ThemeProvider } from '../context/ThemeContext';
+import { SearchFilterProvider } from '../context/SearchFilterContext';
 import { ToastProvider } from '../context/ToastContext';
 import { DashboardPage } from '../pages/DashboardPage';
 import type { DashboardSummary, Task, User } from '../types';
@@ -53,9 +59,27 @@ const mockTasks: Task[] = [
   },
 ];
 
+function renderDashboard() {
+  return render(
+    <MemoryRouter>
+      <ThemeProvider>
+        <SearchFilterProvider>
+          <ToastProvider>
+            <DashboardPage />
+          </ToastProvider>
+        </SearchFilterProvider>
+      </ThemeProvider>
+    </MemoryRouter>,
+  );
+}
+
 describe('SummaryCards', () => {
   it('displays counts from API summary', () => {
-    render(<SummaryCards summary={mockSummary} />);
+    render(
+      <ThemeProvider>
+        <SummaryCards summary={mockSummary} />
+      </ThemeProvider>,
+    );
     expect(screen.getByText('2')).toBeInTheDocument();
     expect(screen.getByText('Completed')).toBeInTheDocument();
     expect(screen.getByText('High Priority')).toBeInTheDocument();
@@ -66,11 +90,13 @@ describe('TaskForm', () => {
   it('shows validation error when title is empty', async () => {
     const user = userEvent.setup();
     render(
-      <TaskForm
-        users={mockUsers}
-        submitLabel="Create"
-        onSubmit={vi.fn()}
-      />,
+      <ThemeProvider>
+        <TaskForm
+          users={mockUsers}
+          submitLabel="Create"
+          onSubmit={vi.fn()}
+        />
+      </ThemeProvider>,
     );
 
     await user.click(screen.getByRole('button', { name: 'Create' }));
@@ -82,11 +108,13 @@ describe('TaskForm', () => {
     const onSubmit = vi.fn().mockResolvedValue(undefined);
 
     render(
-      <TaskForm
-        users={mockUsers}
-        submitLabel="Create"
-        onSubmit={onSubmit}
-      />,
+      <ThemeProvider>
+        <TaskForm
+          users={mockUsers}
+          submitLabel="Create"
+          onSubmit={onSubmit}
+        />
+      </ThemeProvider>,
     );
 
     await user.type(screen.getByLabelText(/title/i), 'New Task');
@@ -108,28 +136,16 @@ describe('DashboardPage', () => {
   });
 
   it('renders tasks from API', async () => {
-    render(
-      <MemoryRouter>
-        <ToastProvider>
-          <DashboardPage />
-        </ToastProvider>
-      </MemoryRouter>,
-    );
+    renderDashboard();
 
-    expect(await screen.findByText('Learn React')).toBeInTheDocument();
+    expect(await screen.findByRole('link', { name: 'Learn React' })).toBeInTheDocument();
     expect(screen.getByText('2')).toBeInTheDocument();
   });
 
   it('shows empty state when no tasks', async () => {
     vi.mocked(tasksApi.getAll).mockResolvedValue([]);
 
-    render(
-      <MemoryRouter>
-        <ToastProvider>
-          <DashboardPage />
-        </ToastProvider>
-      </MemoryRouter>,
-    );
+    renderDashboard();
 
     expect(await screen.findByText(/no tasks found/i)).toBeInTheDocument();
   });
@@ -141,15 +157,9 @@ describe('DashboardPage', () => {
       status: 'Completed',
     });
 
-    render(
-      <MemoryRouter>
-        <ToastProvider>
-          <DashboardPage />
-        </ToastProvider>
-      </MemoryRouter>,
-    );
+    renderDashboard();
 
-    await screen.findByText('Learn React');
+    await screen.findByRole('link', { name: 'Learn React' });
     await user.click(screen.getByRole('button', { name: 'Complete' }));
 
     await waitFor(() => {

@@ -1,66 +1,83 @@
 # Frontend Components
 
+> Document each component as implemented.  
+> **Branch**: `feature/modern-ai-dashboard-ui` (2026-07-03 UI overhaul)
+
+---
+
 ## Layout
 
-- **Purpose**: App shell with header nav and `<Outlet />`
+- **Purpose**: Sidebar shell + topbar with theme toggle
 - **Props**: None
 - **API dependency**: None
-- **State**: None
 - **Reusable**: Yes
 
 ## SummaryCards
 
-- **Purpose**: Display 5 dashboard count cards
+- **Purpose**: 5 dashboard count cards with Lucide icons, hover lift, stagger animation
 - **Props**: `summary: DashboardSummary`
-- **API dependency**: Data from `GET /api/dashboard/summary` (via parent)
-- **State**: Presentational
+- **API dependency**: `GET /api/dashboard/summary`
 - **Reusable**: Yes
 
 ## SearchFilter
 
-- **Purpose**: Keyword search + status dropdown
+- **Purpose**: Keyword search + status filter with Search/Filter icons
 - **Props**: `filters`, `onChange`
-- **API dependency**: None (parent refetches tasks)
 - **Reusable**: Yes
 
 ## TaskList / TaskListItem
 
-- **Purpose**: Render task rows with quick Start/Complete actions
+- **Purpose**: Task rows with avatar, progress bar, badges, Start/Complete/View actions
 - **Props**: `tasks`, `onStatusUpdated`, `onError`
 - **API dependency**: `PATCH /api/tasks/{id}/status`
 - **Reusable**: Yes
 
 ## TaskForm
 
-- **Purpose**: Create and edit tasks with client-side validation
-- **Props**: `users`, `initialValues?`, `submitLabel`, `onSubmit`, `onCancel?`
-- **API dependency**: Indirect via parent (`POST`/`PUT`)
-- **State**: Form values, errors, submitting
+- **Purpose**: Create/edit with validation (unchanged logic)
 - **Reusable**: Yes
 
-## DashboardPage
+## Dashboard panels (`components/dashboard/`)
 
-- **Purpose**: Main dashboard — summary, filters, list, UI states
-- **API dependency**: `GET /api/dashboard/summary`, `GET /api/tasks`
-- **State**: summary, tasks, filters, loading, error
-- **Reusable**: No (page)
+| Component | Purpose | Data source |
+|-----------|---------|-------------|
+| `TaskStatusChart` | Pie chart of status distribution | `DashboardSummary` |
+| `WeeklyProgressChart` | Bar chart created vs completed | `Task[]` dates |
+| `AiInsights` | Insight cards | Computed from summary + tasks |
+| `RecentActivity` | Last 5 updated tasks | `Task[]` by `updatedAt` |
+| `UpcomingDeadlines` | Next due tasks | `Task[]` by `dueDate` |
 
-## CreateTaskPage / TaskDetailPage
+## UI primitives (`components/ui/`)
 
-- **Purpose**: Task create and edit routes
-- **API dependency**: `GET /api/users`, `POST`/`GET`/`PUT /api/tasks`
-- **Reusable**: No (pages)
+| Component | Purpose |
+|-----------|---------|
+| `Avatar` | Owner initials |
+| `Skeleton` / `DashboardSkeleton` | Loading placeholders |
+| `ThemeToggle` | Light/dark switch |
 
-## LoadingState / EmptyState / ErrorState
+## Context
 
-- **Purpose**: Standard UI states per assessment requirements
-- **Reusable**: Yes
+| Provider | Purpose |
+|----------|---------|
+| `ThemeContext` | `data-theme` on `<html>`, localStorage |
+| `ToastContext` | Animated success toasts |
 
-## ToastProvider (context)
+## Pages
 
-- **Purpose**: Success toast messages after create/update
-- **Reusable**: Yes (app-level)
+| Page | Notes |
+|------|-------|
+| `DashboardPage` | Full dashboard grid + skeleton loading |
+| `CreateTaskPage` | Styled form page |
+| `TaskDetailPage` | Styled edit page |
+
+## State components
+
+| Component | Purpose |
+|-----------|---------|
+| `LoadingState` | Spinner (form pages) |
+| `EmptyState` | Inbox icon + CTA |
+| `ErrorState` | Alert icon + retry |
 
 ---
 
-*Last updated: 2026-07-03*
+*Last updated: 2026-07-03 — feature/modern-ai-dashboard-ui*

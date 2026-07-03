@@ -8,7 +8,7 @@ AI Learning Dashboard — a frontend-heavy assessment app for tracking learning 
 
 | Item | Value |
 |------|-------|
-| **Active branch** | `feature/git-workflow-setup` (from `dev`) |
+| **Active branch** | `feature/modern-ai-dashboard-ui` (from `dev`) |
 | **Integration branch** | `dev` |
 | **Stable branch** | `main` — initial commit `413947a` (`Initial project setup`); **do not recreate history** |
 | **Stack** | React + Vite, ASP.NET Core, EF Core SQLite |

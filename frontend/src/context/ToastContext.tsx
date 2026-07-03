@@ -1,4 +1,9 @@
+/**
+ * @branch feature/modern-ai-dashboard-ui
+ * @history 2026-07-03 — Toast with smooth enter/exit transitions
+ */
 import { createContext, useCallback, useContext, useMemo, useState } from 'react';
+import { CheckCircle2 } from 'lucide-react';
 
 interface ToastContextValue {
   showSuccess: (message: string) => void;
@@ -8,10 +13,13 @@ const ToastContext = createContext<ToastContextValue | null>(null);
 
 export function ToastProvider({ children }: { children: React.ReactNode }) {
   const [message, setMessage] = useState<string | null>(null);
+  const [visible, setVisible] = useState(false);
 
   const showSuccess = useCallback((text: string) => {
     setMessage(text);
-    window.setTimeout(() => setMessage(null), 3000);
+    setVisible(true);
+    window.setTimeout(() => setVisible(false), 2800);
+    window.setTimeout(() => setMessage(null), 3200);
   }, []);
 
   const value = useMemo(() => ({ showSuccess }), [showSuccess]);
@@ -20,7 +28,12 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
     <ToastContext.Provider value={value}>
       {children}
       {message && (
-        <div className="toast success-toast" role="status" aria-live="polite">
+        <div
+          className={`toast success-toast ${visible ? 'toast--visible' : 'toast--hidden'}`}
+          role="status"
+          aria-live="polite"
+        >
+          <CheckCircle2 size={18} />
           {message}
         </div>
       )}

@@ -19,7 +19,7 @@ Built as an engineering assessment with full documentation traceability (see `/d
 
 | Layer | Technology |
 |-------|------------|
-| Frontend | React, TypeScript, Vite, React Router |
+| Frontend | React, TypeScript, Vite, React Router, Recharts, Lucide React |
 | Backend | ASP.NET Core Web API |
 | Database | SQLite + Entity Framework Core |
 | Backend tests | xUnit |
@@ -34,6 +34,15 @@ Built as an engineering assessment with full documentation traceability (see `/d
 - Mark In Progress / Completed
 - Seeded users for task ownership
 - Core automated tests
+- **Modern AI SaaS UI** — light/dark mode, charts, insights panels, skeleton loading
+
+## UI Features
+
+- Premium summary cards with icons and hover animations
+- Task status (pie) and weekly progress (bar) charts via Recharts
+- AI Insights, Recent Activity, and Upcoming Deadlines (from real API data)
+- Responsive sidebar layout (desktop, tablet, mobile)
+- Light/dark theme toggle with persistence
 
 ## Folder Structure
 

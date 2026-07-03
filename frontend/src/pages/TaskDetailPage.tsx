@@ -1,3 +1,7 @@
+/**
+ * @branch feature/modern-ai-dashboard-ui
+ * @history 2026-07-03 — Styled task detail page
+ */
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { tasksApi } from '../api/tasks';
@@ -40,7 +44,7 @@ export function TaskDetailPage() {
   if (error || !task) return <ErrorState message={error ?? 'Task not found'} />;
 
   return (
-    <div className="page-container">
+    <div className="page-container page-enter">
       <header className="page-header">
         <h1>Task Details</h1>
         <p>

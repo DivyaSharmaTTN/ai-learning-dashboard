@@ -47,4 +47,31 @@ Planned:
 
 ---
 
+## Entry 002 — Modern AI SaaS Dashboard UI
+
+**Date**: 2026-07-03  
+**Branch**: `feature/modern-ai-dashboard-ui`
+
+### Prompt / Summary
+
+Enhance UI to modern AI SaaS dashboard (Linear/Notion AI/Vercel style) without changing functionality. Add charts, dark mode, insights panels, skeletons.
+
+### What Was Accepted
+
+- Recharts for charts; Lucide for icons
+- All insights derived from real API data (no hardcoded counts)
+- Sidebar layout + theme toggle
+- Branch history comments in source files
+
+### Files Affected
+
+- `frontend/src/**` (see feature-log FL-005)
+- Documentation: README, ARCHITECTURE, CHANGELOG, TASKS, frontend-components.md
+
+### Git Commit Reference
+
+`[COMMIT_HASH_PLACEHOLDER]` — `feat(frontend): modern AI SaaS dashboard UI with charts and dark mode`
+
+---
+
 *Append entries as frontend is built.*

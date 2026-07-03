@@ -1,3 +1,7 @@
+/**
+ * @branch feature/modern-ai-dashboard-ui
+ * @history 2026-07-03 — Styled create task page
+ */
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { tasksApi } from '../api/tasks';
@@ -29,7 +33,7 @@ export function CreateTaskPage() {
   if (error) return <ErrorState message={error} />;
 
   return (
-    <div className="page-container">
+    <div className="page-container page-enter">
       <header className="page-header">
         <h1>Create Task</h1>
         <p>Add a new learning goal or project item</p>

@@ -71,4 +71,22 @@
 
 ---
 
+## FL-005 — Modern AI SaaS Dashboard UI
+
+| Field | Value |
+|-------|-------|
+| **Feature name** | Modern AI SaaS dashboard UI overhaul |
+| **Requirement** | Premium UI without changing API/functionality |
+| **Branch** | `feature/modern-ai-dashboard-ui` |
+| **Files created** | `frontend/src/context/ThemeContext.tsx`, `frontend/src/utils/dashboardAnalytics.ts`, `frontend/src/components/ui/*`, `frontend/src/components/dashboard/*` |
+| **Files modified** | Layout, SummaryCards, SearchFilter, TaskListItem, DashboardPage, index.css, App.tsx, ToastContext, EmptyState, ErrorState, tests, setupTests |
+| **Database changes** | None |
+| **API changes** | None |
+| **Frontend changes** | Recharts charts, dark mode, insights panels, skeletons, sidebar layout |
+| **Testing added** | Tests updated for ThemeProvider; 6/6 passing |
+| **Status** | Complete |
+| **Date** | 2026-07-03 |
+
+---
+
 *Append new features below.*

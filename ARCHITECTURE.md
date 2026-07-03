@@ -35,9 +35,14 @@ Controllers  →  Services  →  Repositories  →  AppDbContext
 ## Frontend Structure
 
 ```
-App (Router + ToastProvider)
-├── Layout
-├── DashboardPage → SummaryCards, SearchFilter, TaskList
+App (ThemeProvider + Router + ToastProvider)
+├── Layout (sidebar + theme toggle)
+├── DashboardPage
+│   ├── SummaryCards (icons, animations)
+│   ├── TaskStatusChart / WeeklyProgressChart (Recharts)
+│   ├── AiInsights / RecentActivity / UpcomingDeadlines
+│   ├── SearchFilter / TaskList / TaskListItem
+│   └── DashboardSkeleton (loading)
 ├── CreateTaskPage → TaskForm
 └── TaskDetailPage → TaskForm
 ```
@@ -45,9 +50,10 @@ App (Router + ToastProvider)
 | Module | Role |
 |--------|------|
 | `src/api/` | HTTP client; no hardcoded dashboard data |
-| `src/components/` | Reusable UI including Loading, Empty, Error states |
-| `src/pages/` | Route-level containers |
-| `src/context/` | Toast for success messages |
+| `src/components/ui/` | Avatar, Skeleton, ThemeToggle |
+| `src/components/dashboard/` | Charts, insights, activity panels |
+| `src/context/ThemeContext.tsx` | Light/dark mode (`localStorage`) |
+| `src/utils/dashboardAnalytics.ts` | Insights/charts computed from task data |
 
 ## Data Model
 

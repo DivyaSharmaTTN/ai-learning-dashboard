@@ -14,6 +14,18 @@ The **initial commit** (`413947a` — `Initial project setup`) exists on `main` 
 
 ### Added
 
+- **Modern AI SaaS dashboard UI** (`feature/modern-ai-dashboard-ui`)
+  - Light/dark theme with persistence
+  - Premium summary cards with Lucide icons, hover effects, animations
+  - Recharts: task status pie chart, weekly progress bar chart
+  - AI Insights, Recent Activity, Upcoming Deadlines (derived from real API data)
+  - Redesigned task cards with progress bars, avatars, badges
+  - Sidebar layout, loading skeletons, enhanced toasts and empty/error states
+  - Default dark Synaptix-style glassmorphism theme
+- Browser tab and sidebar brand show **Dashboard** (not "frontend")
+
+### Added (prior)
+
 - Git workflow documentation: `dev` branch, feature-branch policy, no direct commits to `main`
 - Root docs: `ARCHITECTURE.md`, `CHANGELOG.md`, `TASKS.md`
 

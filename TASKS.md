@@ -15,27 +15,18 @@
 - [x] Initial commit on `main` recorded (`413947a`) — do not recreate history
 - [x] Create `dev` branch from `main`
 - [x] Document branch workflow in README, ARCHITECTURE, CHANGELOG
-- [ ] Merge `feature/git-workflow-setup` → `dev`
-- [ ] Ongoing: use `feature/<task-name>` from `dev` for all new work
+- [x] `feature/git-workflow-setup` — Git workflow docs
+- [x] `feature/modern-ai-dashboard-ui` — Modern AI SaaS UI (current)
+- [ ] Merge feature branches → `dev`
 - [ ] Never commit directly to `main`
 
 ---
-
-## Phase 1: Foundation
-
-- [x] Analyze repository
-- [x] Create documentation structure
-- [x] README.md
-
-## Phase 2: Backend
-
-- [x] ASP.NET Core API, EF Core SQLite, validation, dashboard summary
-- [x] xUnit integration tests (6 passing)
 
 ## Phase 3: Frontend
 
 - [x] React dashboard, task CRUD, filters, UI states
 - [x] Vitest/RTL tests (6 passing)
+- [x] Modern AI SaaS UI overhaul (Recharts, dark mode, insights)
 
 ## Phase 4: Testing & QA
 
@@ -52,7 +43,7 @@
 
 ## Current Branch
 
-`feature/git-workflow-setup` (from `dev`)
+`feature/modern-ai-dashboard-ui` (from `dev`)
 
 ---
 

@@ -61,8 +61,16 @@
 - [x] Record initial commit on `main` (`413947a`)
 - [x] Create `dev` branch
 - [x] Create `feature/git-workflow-setup`
-- [x] Add ARCHITECTURE.md, CHANGELOG.md, TASKS.md
-- [x] Update README and Cursor workflow docs
+Git workflow established. UI overhaul on `feature/modern-ai-dashboard-ui`.
+
+## UI Overhaul Task (2026-07-03)
+
+- [x] Install recharts + lucide-react
+- [x] ThemeContext light/dark mode
+- [x] Premium summary cards, task cards, sidebar layout
+- [x] Charts, AI Insights, Recent Activity, Upcoming Deadlines
+- [x] Skeleton loading, enhanced toasts/transitions
+- [x] Tests updated (6/6 passing)
 
 ---
 
