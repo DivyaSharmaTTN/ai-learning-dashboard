@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="AiLearningDashboard.Api.Tests/AiLearningDashboard.Api.Tests.csproj" />
+  <Project Path="AiLearningDashboard.Api/AiLearningDashboard.Api.csproj" />
+</Solution>

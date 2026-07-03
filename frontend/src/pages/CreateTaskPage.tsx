@@ -1,0 +1,49 @@
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { tasksApi } from '../api/tasks';
+import { usersApi } from '../api/users';
+import { ErrorState } from '../components/ErrorState';
+import { LoadingState } from '../components/LoadingState';
+import { TaskForm } from '../components/TaskForm';
+import { useToast } from '../context/ToastContext';
+import type { User } from '../types';
+
+export function CreateTaskPage() {
+  const navigate = useNavigate();
+  const { showSuccess } = useToast();
+  const [users, setUsers] = useState<User[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    usersApi
+      .getAll()
+      .then(setUsers)
+      .catch((err) =>
+        setError(err instanceof Error ? err.message : 'Failed to load users'),
+      )
+      .finally(() => setLoading(false));
+  }, []);
+
+  if (loading) return <LoadingState message="Loading form..." />;
+  if (error) return <ErrorState message={error} />;
+
+  return (
+    <div className="page-container">
+      <header className="page-header">
+        <h1>Create Task</h1>
+        <p>Add a new learning goal or project item</p>
+      </header>
+      <TaskForm
+        users={users}
+        submitLabel="Create Task"
+        onCancel={() => navigate('/')}
+        onSubmit={async (payload) => {
+          await tasksApi.create(payload);
+          showSuccess('Task created successfully');
+          navigate('/');
+        }}
+      />
+    </div>
+  );
+}
