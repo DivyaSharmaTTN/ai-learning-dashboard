@@ -50,8 +50,19 @@
 ## Phase 5: Finalization
 
 - [x] Sync project notes and api-log
-- [ ] Git commits on feature branches
+- [x] Git workflow: `dev` branch + feature branch policy documented
+- [ ] Merge feature branches to `dev`, then PR to `main`
 - [ ] PR description with screenshots
+
+---
+
+## Git Workflow Task (2026-07-03)
+
+- [x] Record initial commit on `main` (`413947a`)
+- [x] Create `dev` branch
+- [x] Create `feature/git-workflow-setup`
+- [x] Add ARCHITECTURE.md, CHANGELOG.md, TASKS.md
+- [x] Update README and Cursor workflow docs
 
 ---
 

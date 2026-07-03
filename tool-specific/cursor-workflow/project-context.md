@@ -8,9 +8,18 @@ AI Learning Dashboard — a frontend-heavy assessment app for tracking learning 
 
 | Item | Value |
 |------|-------|
-| Branch | `main` (initial) |
-| Commits | None at project start |
-| Stack | React + Vite, ASP.NET Core, EF Core SQLite |
+| **Active branch** | `feature/git-workflow-setup` (from `dev`) |
+| **Integration branch** | `dev` |
+| **Stable branch** | `main` — initial commit `413947a` (`Initial project setup`); **do not recreate history** |
+| **Stack** | React + Vite, ASP.NET Core, EF Core SQLite |
+
+## Git Workflow (Mandatory)
+
+1. **Never work directly on `main`**
+2. Branch from `dev`: `feature/<task-name>`
+3. Merge feature → `dev` → PR to `main` when stable
+4. Keep solution buildable; run `dotnet build` + `dotnet test` + `npm test` before completing tasks
+5. Update README, CHANGELOG, ARCHITECTURE, TASKS, and project notes after every change
 
 ## Key Constraints (Always Enforce)
 
@@ -29,6 +38,7 @@ AI Learning Dashboard — a frontend-heavy assessment app for tracking learning 
 - `docs/` — Assessment documentation
 - `project-notes/` — Living logs (source of truth for current state: `project-memory.md`)
 - `ai-prompts/` — Prompt history with commit placeholders
+- `ARCHITECTURE.md`, `CHANGELOG.md`, `TASKS.md` — Root workflow docs
 
 ## API Base URL
 
@@ -36,10 +46,10 @@ AI Learning Dashboard — a frontend-heavy assessment app for tracking learning 
 
 ## Current Focus
 
-Session 1: Documentation scaffold → Backend API → Frontend UI → Tests
+Git workflow established on `dev`. Next: manual E2E verification, merge feature branches.
 
 ## Standards
 
 - Meaningful commit messages: `feat(scope):`, `fix(scope):`, `docs:`, `test:`
-- Feature branches per `docs/implementation-plan.md`
-- After each session: update `project-memory.md`, `feature-log.md`, relevant logs
+- Feature branches from `dev` only
+- After each session: update `project-memory.md`, `feature-log.md`, CHANGELOG, TASKS

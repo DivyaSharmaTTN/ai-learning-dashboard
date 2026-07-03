@@ -1,6 +1,16 @@
 # Project Memory
 
-> **Last updated**: 2026-07-03 — Session 1 (planning + docs scaffold; implementation in progress)
+> **Last updated**: 2026-07-03 — Git workflow established on `dev`
+
+## Git Workflow
+
+| Branch | Commit / Role |
+|--------|---------------|
+| `main` | `413947a` — Initial project setup (baseline; do not recreate) |
+| `dev` | Integration branch for all merged features |
+| `feature/*` | Active development (current: `feature/git-workflow-setup`) |
+
+**Policy**: Never commit directly to `main`. All new work branches from `dev`.
 
 ## Current Architecture
 

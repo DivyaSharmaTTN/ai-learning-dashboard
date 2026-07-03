@@ -54,4 +54,21 @@
 
 ---
 
+## FL-004 — Git Workflow Setup
+
+| Field | Value |
+|-------|-------|
+| **Feature name** | Git branch workflow (`dev` + feature branches) |
+| **Requirement** | User Git workflow rules; no direct `main` commits |
+| **Files created** | `ARCHITECTURE.md`, `CHANGELOG.md`, `TASKS.md` |
+| **Files modified** | `README.md`, `tool-specific/cursor-workflow/*`, `project-notes/project-memory.md`, `project-notes/decision-log.md` |
+| **Database changes** | None |
+| **API changes** | None |
+| **Frontend changes** | None |
+| **Testing added** | None |
+| **Status** | Complete |
+| **Date** | 2026-07-03 |
+
+---
+
 *Append new features below.*

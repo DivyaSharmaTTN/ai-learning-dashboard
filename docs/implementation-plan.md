@@ -2,9 +2,10 @@
 
 ## Current Repository State
 
-- **Status**: Fresh Git repository (`main` branch, no commits)
-- **Existing code**: None
-- **Existing docs**: Created in Session 1 (this plan)
+- **Status**: Initial commit on `main` (`413947a` — `Initial project setup`); do not recreate history
+- **Integration branch**: `dev` (created from `main`)
+- **Active work**: `feature/git-workflow-setup` from `dev`
+- **Existing code**: Full stack implemented (see Session 1)
 
 ## Architecture
 

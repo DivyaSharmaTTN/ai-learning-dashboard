@@ -49,7 +49,33 @@ N/A — greenfield project.
 
 ### Git Commit Reference
 
-`[COMMIT_HASH_PLACEHOLDER]` — `docs: initial project documentation and planning scaffold`
+`413947a` — `Initial project setup` (on `main`; preserved, not recreated)
+
+---
+
+## Entry 002 — Git Workflow Setup
+
+**Date**: 2026-07-03
+
+### Prompt / Summary
+
+Establish Git workflow: never work on `main`; create `dev`; use `feature/<task-name>` from `dev`; update docs; record existing initial commit.
+
+### AI Response Summary
+
+- Created `dev` from `main` at `413947a`
+- Created `feature/git-workflow-setup` for documentation updates
+- Added `ARCHITECTURE.md`, `CHANGELOG.md`, `TASKS.md`
+- Updated README, Cursor workflow, project notes
+
+### Files Affected
+
+- `ARCHITECTURE.md`, `CHANGELOG.md`, `TASKS.md`, `README.md`
+- `tool-specific/cursor-workflow/*`, `project-notes/*`, `docs/implementation-plan.md`
+
+### Git Commit Reference
+
+`[COMMIT_HASH_PLACEHOLDER]` — `docs: establish dev branch and git workflow documentation`
 
 ---
 

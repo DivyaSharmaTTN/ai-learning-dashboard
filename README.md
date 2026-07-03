@@ -110,6 +110,30 @@ cd frontend
 npm test
 ```
 
+## Git Workflow
+
+**Do not commit directly to `main`.**
+
+| Branch | Purpose |
+|--------|---------|
+| `main` | Stable baseline. Initial commit: `413947a` (`Initial project setup`) — do not recreate this history |
+| `dev` | Integration branch; merge feature branches here |
+| `feature/<task-name>` | All new work (e.g. `feature/git-workflow-setup`) |
+
+### Typical flow
+
+```bash
+git checkout dev
+git pull
+git checkout -b feature/my-task
+# ... make changes, verify build ...
+git checkout dev
+git merge feature/my-task
+# When ready: merge dev → main via PR
+```
+
+See also: `ARCHITECTURE.md`, `CHANGELOG.md`, `TASKS.md`.
+
 ## AI Usage Summary
 
 This project was built with **Cursor** as an AI pair programmer:
@@ -126,6 +150,9 @@ See `ai-prompts/01-project-planning.md` for the initial session trace.
 
 | Path | Purpose |
 |------|---------|
+| `ARCHITECTURE.md` | System and branch architecture |
+| `CHANGELOG.md` | Version and change history |
+| `TASKS.md` | Active task tracker |
 | `docs/requirements-analysis.md` | Requirements breakdown |
 | `docs/implementation-plan.md` | Phased build plan |
 | `docs/api-contract.md` | REST API contract |

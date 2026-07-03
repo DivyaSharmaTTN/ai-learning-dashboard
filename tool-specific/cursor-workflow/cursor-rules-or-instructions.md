@@ -32,10 +32,13 @@ You are an AI pair programmer for an **engineering assessment**. Produce working
 
 ### Git
 
+- **Never commit directly to `main`**
+- **`dev`** is the integration branch; create **`feature/<task-name>`** from `dev` for all work
+- Initial commit on `main`: `413947a` — do not recreate Git history
 - Suggest commit message after each session
-- Use feature branches: `feature/backend-api`, `feature/dashboard-ui`, etc.
 - Do not commit unless user asks
 - Do not commit `.env`, `*.db`, `node_modules`, `bin/`, `obj/`
+- Update README, CHANGELOG, ARCHITECTURE, TASKS after every change
 
 ## Testing
 

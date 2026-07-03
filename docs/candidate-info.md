@@ -42,4 +42,4 @@ This repository is built as a personal assessment submission with:
 - [x] Tests passing (backend + frontend)
 - [x] README with setup instructions
 - [x] Documentation matches implementation
-- [ ] Meaningful Git commit history
+- [x] Meaningful Git commit history (in progress — `dev` + feature workflow active)

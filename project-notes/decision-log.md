@@ -56,4 +56,17 @@
 
 ---
 
+## DL-005 — Git branch workflow
+
+| Field | Value |
+|-------|-------|
+| **Decision** | `main` (stable) → `dev` (integration) → `feature/<task>` (work) |
+| **Why chosen** | Assessment requires meaningful branch history; protects initial commit on `main` |
+| **Alternative considered** | Trunk-based development on `main` only |
+| **Trade-off** | Extra merge steps; clearer traceability |
+| **Impact** | All agents and contributors branch from `dev`; documented in README, ARCHITECTURE, TASKS |
+| **Date** | 2026-07-03 |
+
+---
+
 *Append new decisions below.*
