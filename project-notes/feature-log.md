@@ -89,4 +89,23 @@
 
 ---
 
+## FL-006 — Debounced Task Search
+
+| Field | Value |
+|-------|-------|
+| **Feature name** | Fix duplicate search and debounced list-only updates |
+| **Requirement** | Remove topbar search; debounce/Enter search; no full-page refresh on keystroke |
+| **Branch** | `feature/fix-search-debounce` |
+| **Files created** | — |
+| **Files deleted** | `frontend/src/context/SearchFilterContext.tsx` |
+| **Files modified** | Layout, SearchFilter, DashboardPage, App.tsx, index.css, DashboardPage.test.tsx |
+| **Database changes** | None |
+| **API changes** | None (same `GET /api/tasks?search=&status=` contract) |
+| **Frontend changes** | Local search state, 400ms debounce, list-only refetch, topbar title |
+| **Testing added** | Debounce + Search button tests; 8/8 Vitest passing |
+| **Status** | Complete |
+| **Date** | 2026-07-06 |
+
+---
+
 *Append new features below.*

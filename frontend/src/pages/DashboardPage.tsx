@@ -1,6 +1,6 @@
 /**
- * @branch feature/modern-ai-dashboard-ui
- * @history 2026-07-03 — Synaptix-style welcome header + dashboard grid
+ * @branch feature/fix-search-debounce
+ * @history 2026-07-06 — Split dashboard load vs debounced list-only search
  */
 import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -18,50 +18,89 @@ import { SearchFilter } from '../components/SearchFilter';
 import { SummaryCards } from '../components/SummaryCards';
 import { TaskList } from '../components/TaskList';
 import { DashboardSkeleton } from '../components/ui/Skeleton';
-import { useSearchFilter } from '../context/SearchFilterContext';
 import { useToast } from '../context/ToastContext';
-import type { DashboardSummary, Task } from '../types';
+import type { DashboardSummary, Task, TaskFilters, TaskStatus } from '../types';
 
 export function DashboardPage() {
   const { showSuccess } = useToast();
-  const { filters, setFilters } = useSearchFilter();
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [panelTasks, setPanelTasks] = useState<Task[]>([]);
+  const [listTasks, setListTasks] = useState<Task[]>([]);
+  const [statusFilter, setStatusFilter] = useState<TaskStatus | ''>('');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [initialLoading, setInitialLoading] = useState(true);
+  const [listLoading, setListLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [listError, setListError] = useState<string | null>(null);
+  const [dashboardReady, setDashboardReady] = useState(false);
 
-  const loadData = useCallback(async () => {
-    setLoading(true);
+  const loadDashboard = useCallback(async () => {
+    setInitialLoading(true);
     setError(null);
     try {
-      const [summaryData, tasksData] = await Promise.all([
+      const [summaryData, allTasks] = await Promise.all([
         dashboardApi.getSummary(),
-        tasksApi.getAll(filters),
+        tasksApi.getAll({}),
       ]);
       setSummary(summaryData);
-      setTasks(tasksData);
+      setPanelTasks(allTasks);
+      setDashboardReady(true);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load dashboard');
     } finally {
-      setLoading(false);
+      setInitialLoading(false);
     }
-  }, [filters]);
+  }, []);
+
+  const loadTaskList = useCallback(async (filters: TaskFilters) => {
+    setListLoading(true);
+    setListError(null);
+    try {
+      const tasksData = await tasksApi.getAll(filters);
+      setListTasks(tasksData);
+    } catch (err) {
+      setListError(err instanceof Error ? err.message : 'Failed to load tasks');
+    } finally {
+      setListLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
-    void loadData();
-  }, [loadData]);
+    void loadDashboard();
+  }, [loadDashboard]);
+
+  useEffect(() => {
+    if (!dashboardReady) {
+      return;
+    }
+    void loadTaskList({ search: searchQuery, status: statusFilter });
+  }, [dashboardReady, searchQuery, statusFilter, loadTaskList]);
+
+  const handleSearchApply = useCallback((search: string) => {
+    setSearchQuery(search.trim());
+  }, []);
+
+  const handleStatusChange = useCallback((status: TaskStatus | '') => {
+    setStatusFilter(status);
+  }, []);
 
   const handleRefresh = async () => {
-    await loadData();
+    await loadDashboard();
+    await loadTaskList({ search: searchQuery, status: statusFilter });
     showSuccess('Dashboard updated');
   };
 
-  if (loading) {
+  const handleStatusUpdated = async () => {
+    await loadDashboard();
+    await loadTaskList({ search: searchQuery, status: statusFilter });
+  };
+
+  if (initialLoading) {
     return <DashboardSkeleton />;
   }
 
   if (error) {
-    return <ErrorState message={error} onRetry={() => void loadData()} />;
+    return <ErrorState message={error} onRetry={() => void loadDashboard()} />;
   }
 
   return (
@@ -100,26 +139,42 @@ export function DashboardPage() {
         </section>
         <section className="chart-section glass-card">
           <h2 className="section-title">Weekly Progress</h2>
-          <WeeklyProgressChart tasks={tasks} />
+          <WeeklyProgressChart tasks={panelTasks} />
         </section>
         {summary && (
           <div className="glass-card">
-            <AiInsights summary={summary} tasks={tasks} />
+            <AiInsights summary={summary} tasks={panelTasks} />
           </div>
         )}
         <div className="glass-card">
-          <RecentActivity tasks={tasks} />
+          <RecentActivity tasks={panelTasks} />
         </div>
         <div className="glass-card">
-          <UpcomingDeadlines tasks={tasks} />
+          <UpcomingDeadlines tasks={panelTasks} />
         </div>
       </div>
 
-      <section className="tasks-section glass-card">
+      <section className="tasks-section glass-card" aria-busy={listLoading}>
         <h2 className="section-title">Tasks</h2>
-        <SearchFilter filters={filters} onChange={setFilters} />
+        <SearchFilter
+          status={statusFilter}
+          onStatusChange={handleStatusChange}
+          onSearchApply={handleSearchApply}
+          listLoading={listLoading}
+        />
 
-        {tasks.length === 0 ? (
+        {listError && (
+          <p className="list-error" role="alert">
+            {listError}
+          </p>
+        )}
+
+        {listLoading && listTasks.length === 0 ? (
+          <div className="list-loading" role="status">
+            <div className="spinner" aria-hidden="true" />
+            <p>Searching tasks...</p>
+          </div>
+        ) : listTasks.length === 0 ? (
           <EmptyState
             action={
               <Link to="/tasks/new" className="btn btn-primary">
@@ -128,11 +183,18 @@ export function DashboardPage() {
             }
           />
         ) : (
-          <TaskList
-            tasks={tasks}
-            onStatusUpdated={() => void loadData()}
-            onError={(msg) => setError(msg)}
-          />
+          <div className={`task-list-wrapper ${listLoading ? 'task-list-wrapper--loading' : ''}`}>
+            {listLoading && (
+              <div className="list-loading-overlay" aria-hidden="true">
+                <div className="spinner" />
+              </div>
+            )}
+            <TaskList
+              tasks={listTasks}
+              onStatusUpdated={() => void handleStatusUpdated()}
+              onError={(msg) => setListError(msg)}
+            />
+          </div>
         )}
       </section>
     </div>

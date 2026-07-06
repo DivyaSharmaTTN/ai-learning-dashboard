@@ -1,23 +1,35 @@
 /**
- * @branch feature/modern-ai-dashboard-ui
- * @history 2026-07-03 — Synaptix-inspired glass sidebar + topbar
+ * @branch feature/fix-search-debounce
+ * @history 2026-07-06 — Removed duplicate topbar search; topbar shows page title only
  */
 import {
   Bell,
   LayoutDashboard,
   ListTodo,
-  Search,
   Sparkles,
   Zap,
 } from 'lucide-react';
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
-import { useSearchFilter } from '../context/SearchFilterContext';
 import { ThemeToggle } from './ui/ThemeToggle';
 
+const pageTitles: Record<string, string> = {
+  '/': 'Dashboard',
+  '/tasks/new': 'New Task',
+};
+
+function getPageTitle(pathname: string): string {
+  if (pageTitles[pathname]) {
+    return pageTitles[pathname];
+  }
+  if (pathname.startsWith('/tasks/')) {
+    return 'Task Details';
+  }
+  return 'Dashboard';
+}
+
 export function Layout() {
-  const { setSearch } = useSearchFilter();
   const location = useLocation();
-  const isDashboard = location.pathname === '/';
+  const pageTitle = getPageTitle(location.pathname);
 
   return (
     <div className="app-shell">
@@ -62,17 +74,7 @@ export function Layout() {
 
       <div className="app-content">
         <header className="app-topbar glass-panel">
-          <div className="topbar-search">
-            <Search size={18} className="topbar-search-icon" aria-hidden="true" />
-            <input
-              type="search"
-              className="topbar-search-input"
-              placeholder="Search tasks, projects, or learning goals..."
-              onChange={(e) => isDashboard && setSearch(e.target.value)}
-              disabled={!isDashboard}
-              aria-label="Search tasks"
-            />
-          </div>
+          <h1 className="topbar-title">{pageTitle}</h1>
 
           <div className="topbar-actions">
             <button type="button" className="icon-btn notification-btn" aria-label="Notifications">

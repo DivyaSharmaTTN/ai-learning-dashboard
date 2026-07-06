@@ -16,7 +16,8 @@
 - [x] Create `dev` branch from `main`
 - [x] Document branch workflow in README, ARCHITECTURE, CHANGELOG
 - [x] `feature/git-workflow-setup` — Git workflow docs
-- [x] `feature/modern-ai-dashboard-ui` — Modern AI SaaS UI (current)
+- [x] `feature/modern-ai-dashboard-ui` — Modern AI SaaS UI
+- [x] `feature/fix-search-debounce` — Debounced task search, remove duplicate topbar search
 - [ ] Merge feature branches → `dev`
 - [ ] Never commit directly to `main`
 
@@ -27,6 +28,7 @@
 - [x] React dashboard, task CRUD, filters, UI states
 - [x] Vitest/RTL tests (6 passing)
 - [x] Modern AI SaaS UI overhaul (Recharts, dark mode, insights)
+- [x] Debounced task search; list-only AJAX updates; no duplicate topbar search
 
 ## Phase 4: Testing & QA
 
@@ -43,8 +45,8 @@
 
 ## Current Branch
 
-`feature/modern-ai-dashboard-ui` (from `dev`)
+`feature/fix-search-debounce` (from `dev`)
 
 ---
 
-*Last updated: 2026-07-03*
+*Last updated: 2026-07-06*

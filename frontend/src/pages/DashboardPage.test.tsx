@@ -1,15 +1,14 @@
 /**
- * @branch feature/modern-ai-dashboard-ui
- * @history 2026-07-03 — Tests updated for ThemeProvider wrapper
+ * @branch feature/fix-search-debounce
+ * @history 2026-07-06 — Tests for debounced list-only search
  */
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { SummaryCards } from '../components/SummaryCards';
 import { TaskForm } from '../components/TaskForm';
 import { ThemeProvider } from '../context/ThemeContext';
-import { SearchFilterProvider } from '../context/SearchFilterContext';
 import { ToastProvider } from '../context/ToastContext';
 import { DashboardPage } from '../pages/DashboardPage';
 import type { DashboardSummary, Task, User } from '../types';
@@ -63,11 +62,9 @@ function renderDashboard() {
   return render(
     <MemoryRouter>
       <ThemeProvider>
-        <SearchFilterProvider>
-          <ToastProvider>
-            <DashboardPage />
-          </ToastProvider>
-        </SearchFilterProvider>
+        <ToastProvider>
+          <DashboardPage />
+        </ToastProvider>
       </ThemeProvider>
     </MemoryRouter>,
   );
@@ -131,8 +128,14 @@ describe('TaskForm', () => {
 
 describe('DashboardPage', () => {
   beforeEach(() => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
     vi.mocked(dashboardApi.getSummary).mockResolvedValue(mockSummary);
     vi.mocked(tasksApi.getAll).mockResolvedValue(mockTasks);
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+    vi.clearAllMocks();
   });
 
   it('renders tasks from API', async () => {
@@ -151,7 +154,7 @@ describe('DashboardPage', () => {
   });
 
   it('updates status via quick action', async () => {
-    const user = userEvent.setup();
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
     vi.mocked(tasksApi.updateStatus).mockResolvedValue({
       ...mockTasks[0],
       status: 'Completed',
@@ -164,6 +167,49 @@ describe('DashboardPage', () => {
 
     await waitFor(() => {
       expect(tasksApi.updateStatus).toHaveBeenCalledWith(1, 'Completed');
+    });
+  });
+
+  it('debounces search and updates list without reloading summary', async () => {
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+
+    renderDashboard();
+    await screen.findByRole('link', { name: 'Learn React' });
+
+    const initialSummaryCalls = vi.mocked(dashboardApi.getSummary).mock.calls.length;
+    const initialTaskCalls = vi.mocked(tasksApi.getAll).mock.calls.length;
+
+    const searchInput = screen.getByPlaceholderText(/search by title/i);
+    await user.type(searchInput, 'react');
+
+    // Before debounce: no extra list fetch
+    expect(vi.mocked(tasksApi.getAll).mock.calls.length).toBe(initialTaskCalls);
+    expect(vi.mocked(dashboardApi.getSummary).mock.calls.length).toBe(initialSummaryCalls);
+
+    await vi.advanceTimersByTimeAsync(400);
+
+    await waitFor(() => {
+      expect(vi.mocked(tasksApi.getAll)).toHaveBeenCalledWith(
+        expect.objectContaining({ search: 'react' }),
+      );
+    });
+    expect(vi.mocked(dashboardApi.getSummary).mock.calls.length).toBe(initialSummaryCalls);
+  });
+
+  it('applies search immediately on Search button click', async () => {
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+
+    renderDashboard();
+    await screen.findByRole('link', { name: 'Learn React' });
+
+    const searchInput = screen.getByPlaceholderText(/search by title/i);
+    await user.type(searchInput, 'hooks');
+    await user.click(screen.getByRole('button', { name: 'Search' }));
+
+    await waitFor(() => {
+      expect(vi.mocked(tasksApi.getAll)).toHaveBeenCalledWith(
+        expect.objectContaining({ search: 'hooks' }),
+      );
     });
   });
 });

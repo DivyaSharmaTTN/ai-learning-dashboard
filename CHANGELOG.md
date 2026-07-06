@@ -33,6 +33,15 @@ The **initial commit** (`413947a` — `Initial project setup`) exists on `main` 
 
 - Updated README with Git workflow section
 - Updated Cursor workflow and project notes to reflect branch strategy
+- **Task search behavior** (`feature/fix-search-debounce`)
+  - Removed duplicate topbar search; page title shown in topbar instead
+  - Tasks section search uses local state with 400ms debounce, Enter, and Search button
+  - Dashboard panels load once; only the task list refetches on search/filter changes
+  - Status filter preserved independently; list shows inline loading overlay (no full-page skeleton)
+
+### Fixed
+
+- Full-page refresh feel on every search keystroke (shared filter context triggered `loadDashboard()`)
 
 ---
 
