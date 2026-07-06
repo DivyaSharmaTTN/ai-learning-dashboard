@@ -68,7 +68,7 @@ ai-learning-dashboard/
 ### 1. Clone the repository
 
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/DivyaSharmaTTN/ai-learning-dashboard.git
 cd ai-learning-dashboard
 ```
 
