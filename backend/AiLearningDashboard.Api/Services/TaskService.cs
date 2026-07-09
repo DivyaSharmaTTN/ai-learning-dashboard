@@ -1,3 +1,6 @@
+// @branch feature/stretch-activity-log
+// @history 2026-07-09 — Log Created, Updated, and StatusChanged events in TaskService
+
 using AiLearningDashboard.Api.DTOs;
 using AiLearningDashboard.Api.Entities;
 using AiLearningDashboard.Api.Repositories;
@@ -14,7 +17,7 @@ public interface ITaskService
     Task<(TaskDto? Task, string? Error)> UpdateStatusAsync(int id, string status, CancellationToken cancellationToken = default);
 }
 
-public class TaskService(ITaskRepository taskRepository) : ITaskService
+public class TaskService(ITaskRepository taskRepository, IActivityLogService activityLogService) : ITaskService
 {
     public async Task<List<TaskDto>> GetAllAsync(string? search, string? status, CancellationToken cancellationToken = default)
     {
@@ -62,7 +65,20 @@ public class TaskService(ITaskRepository taskRepository) : ITaskService
 
         var created = await taskRepository.AddAsync(task, cancellationToken);
         var withOwner = await taskRepository.GetByIdAsync(created.Id, cancellationToken);
-        return (withOwner is null ? null : MapToDto(withOwner), null);
+        if (withOwner is null)
+        {
+            return (null, null);
+        }
+
+        await activityLogService.LogAsync(
+            withOwner.Id,
+            "Created",
+            previousValue: null,
+            newValue: withOwner.Title,
+            user: withOwner.Owner?.Name ?? "System",
+            cancellationToken);
+
+        return (MapToDto(withOwner), null);
     }
 
     public async Task<(TaskDto? Task, string? Error)> UpdateAsync(int id, UpdateTaskDto dto, CancellationToken cancellationToken = default)
@@ -78,6 +94,9 @@ public class TaskService(ITaskRepository taskRepository) : ITaskService
             return (null, "Owner does not exist.");
         }
 
+        var actor = existing.Owner?.Name ?? "System";
+        var snapshots = CaptureSnapshot(existing);
+
         existing.Title = dto.Title.Trim();
         existing.Description = dto.Description?.Trim() ?? string.Empty;
         existing.Category = Enum.Parse<TaskCategory>(dto.Category, true);
@@ -88,6 +107,8 @@ public class TaskService(ITaskRepository taskRepository) : ITaskService
         existing.UpdatedAt = DateTime.UtcNow;
 
         await taskRepository.UpdateAsync(existing, cancellationToken);
+        await LogFieldChangesAsync(id, snapshots, existing, actor, cancellationToken);
+
         var updated = await taskRepository.GetByIdAsync(id, cancellationToken);
         return (updated is null ? null : MapToDto(updated), null);
     }
@@ -100,13 +121,87 @@ public class TaskService(ITaskRepository taskRepository) : ITaskService
             return (null, "Task not found.");
         }
 
+        var previousStatus = existing.Status.ToString();
+        var newStatus = Enum.Parse<TaskStatus>(status, true).ToString();
+        if (previousStatus == newStatus)
+        {
+            return (MapToDto(existing), null);
+        }
+
         existing.Status = Enum.Parse<TaskStatus>(status, true);
         existing.UpdatedAt = DateTime.UtcNow;
 
         await taskRepository.UpdateAsync(existing, cancellationToken);
+
+        await activityLogService.LogAsync(
+            id,
+            "StatusChanged",
+            previousValue: previousStatus,
+            newValue: newStatus,
+            user: existing.Owner?.Name ?? "System",
+            cancellationToken);
+
         var updated = await taskRepository.GetByIdAsync(id, cancellationToken);
         return (updated is null ? null : MapToDto(updated), null);
     }
+
+    private async Task LogFieldChangesAsync(
+        int taskId,
+        TaskSnapshot before,
+        ProjectTask after,
+        string actor,
+        CancellationToken cancellationToken)
+    {
+        if (before.Title != after.Title)
+        {
+            await activityLogService.LogAsync(taskId, "Updated", $"Title: {before.Title}", $"Title: {after.Title}", actor, cancellationToken);
+        }
+
+        if (before.Description != after.Description)
+        {
+            await activityLogService.LogAsync(taskId, "Updated", $"Description: {before.Description}", $"Description: {after.Description}", actor, cancellationToken);
+        }
+
+        if (before.Category != after.Category.ToString())
+        {
+            await activityLogService.LogAsync(taskId, "Updated", $"Category: {before.Category}", $"Category: {after.Category}", actor, cancellationToken);
+        }
+
+        if (before.Priority != after.Priority.ToString())
+        {
+            await activityLogService.LogAsync(taskId, "Updated", $"Priority: {before.Priority}", $"Priority: {after.Priority}", actor, cancellationToken);
+        }
+
+        if (before.Status != after.Status.ToString())
+        {
+            await activityLogService.LogAsync(taskId, "StatusChanged", before.Status, after.Status.ToString(), actor, cancellationToken);
+        }
+
+        if (before.OwnerId != after.OwnerId)
+        {
+            await activityLogService.LogAsync(taskId, "Updated", $"OwnerId: {before.OwnerId}", $"OwnerId: {after.OwnerId}", actor, cancellationToken);
+        }
+
+        if (before.DueDate != after.DueDate.Date)
+        {
+            await activityLogService.LogAsync(
+                taskId,
+                "Updated",
+                $"DueDate: {before.DueDate:yyyy-MM-dd}",
+                $"DueDate: {after.DueDate:yyyy-MM-dd}",
+                actor,
+                cancellationToken);
+        }
+    }
+
+    private static TaskSnapshot CaptureSnapshot(ProjectTask task) => new(
+        task.Title,
+        task.Description,
+        task.Category.ToString(),
+        task.Priority.ToString(),
+        task.Status.ToString(),
+        task.OwnerId,
+        task.DueDate.Date);
 
     private static TaskDto MapToDto(ProjectTask task)
     {
@@ -127,6 +222,15 @@ public class TaskService(ITaskRepository taskRepository) : ITaskService
             IsOverdue = task.DueDate.Date < today && task.Status != TaskStatus.Completed
         };
     }
+
+    private sealed record TaskSnapshot(
+        string Title,
+        string Description,
+        string Category,
+        string Priority,
+        string Status,
+        int OwnerId,
+        DateTime DueDate);
 }
 
 public interface IDashboardService

@@ -1,5 +1,6 @@
 /**
  * @branch feature/modern-ai-dashboard-ui
+ * @history 2026-07-09 — Activity history styles for task detail audit log (feature/stretch-activity-log)
  * @history 2026-07-03 — Modern AI SaaS design system with light/dark themes
  */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
@@ -863,6 +864,51 @@ a {
 .activity-dot.status-completed { background: var(--success); }
 .activity-dot.status-inprogress { background: var(--primary); }
 .activity-dot.status-notstarted { background: var(--muted); }
+
+/* Activity History (task detail audit log) */
+.activity-history {
+  margin-top: 1.5rem;
+  padding: 1.25rem;
+}
+
+.activity-history-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.activity-history-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.activity-history-item:last-child {
+  border-bottom: none;
+}
+
+.activity-dot--created { background: var(--success); }
+.activity-dot--updated { background: var(--primary); }
+.activity-dot--statuschanged { background: var(--warning); }
+
+.activity-history-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.activity-history-action {
+  margin: 0 0 0.25rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.activity-history-meta {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
 
 .activity-item div,
 .deadline-info {

@@ -1,3 +1,6 @@
+// @branch feature/stretch-activity-log
+// @history 2026-07-09 — ActivityLogs DbSet and entity configuration
+
 using AiLearningDashboard.Api.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,6 +10,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
 {
     public DbSet<User> Users => Set<User>();
     public DbSet<ProjectTask> ProjectTasks => Set<ProjectTask>();
+    public DbSet<ActivityLog> ActivityLogs => Set<ActivityLog>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -31,6 +35,22 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                 .WithMany(u => u.Tasks)
                 .HasForeignKey(t => t.OwnerId)
                 .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<ActivityLog>(entity =>
+        {
+            entity.HasKey(l => l.Id);
+            entity.Property(l => l.Action).IsRequired().HasMaxLength(50);
+            entity.Property(l => l.PreviousValue).HasMaxLength(500);
+            entity.Property(l => l.NewValue).HasMaxLength(500);
+            entity.Property(l => l.User).IsRequired().HasMaxLength(100);
+
+            entity.HasOne(l => l.Task)
+                .WithMany()
+                .HasForeignKey(l => l.TaskId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasIndex(l => l.TaskId);
         });
 
         SeedUsers(modelBuilder);

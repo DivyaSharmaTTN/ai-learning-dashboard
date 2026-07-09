@@ -14,6 +14,12 @@ The **initial commit** (`413947a` — `Initial project setup`) exists on `main` 
 
 ### Added
 
+- **Activity log / audit history** (`feature/stretch-activity-log`)
+  - `ActivityLogs` table and EF migration
+  - Automatic logging on task create, update, and status change
+  - `GET /api/tasks/{id}/activity` endpoint
+  - `ActivityHistory` panel on task detail page
+  - 3 additional backend integration tests (11 total)
 - **Modern AI SaaS dashboard UI** (`feature/modern-ai-dashboard-ui`)
   - Light/dark theme with persistence
   - Premium summary cards with Lucide icons, hover effects, animations

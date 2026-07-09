@@ -1,3 +1,6 @@
+// @branch feature/stretch-activity-log
+// @history 2026-07-09 — ActivityLogDto for audit history API responses
+
 using System.Text.Json.Serialization;
 using AiLearningDashboard.Api.Entities;
 
@@ -68,4 +71,15 @@ public class TaskQueryDto
 {
     public string? Search { get; set; }
     public string? Status { get; set; }
+}
+
+public class ActivityLogDto
+{
+    public int Id { get; set; }
+    public int TaskId { get; set; }
+    public string Action { get; set; } = string.Empty;
+    public string? PreviousValue { get; set; }
+    public string? NewValue { get; set; }
+    public string User { get; set; } = string.Empty;
+    public DateTime Timestamp { get; set; }
 }

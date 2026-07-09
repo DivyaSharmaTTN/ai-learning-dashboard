@@ -1,3 +1,6 @@
+// @branch feature/stretch-activity-log
+// @history 2026-07-09 — Register ActivityLog repository and service
+
 using AiLearningDashboard.Api.Data;
 using AiLearningDashboard.Api.Repositories;
 using AiLearningDashboard.Api.Services;
@@ -24,9 +27,11 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddScoped<ITaskRepository, TaskRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IDashboardRepository, DashboardRepository>();
+builder.Services.AddScoped<IActivityLogRepository, ActivityLogRepository>();
 builder.Services.AddScoped<ITaskService, TaskService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IDashboardService, DashboardService>();
+builder.Services.AddScoped<IActivityLogService, ActivityLogService>();
 
 builder.Services.AddCors(options =>
 {

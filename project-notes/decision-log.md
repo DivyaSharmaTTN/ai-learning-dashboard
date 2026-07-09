@@ -69,4 +69,17 @@
 
 ---
 
+## DL-006 — Activity log user attribution without auth
+
+| Field | Value |
+|-------|-------|
+| **Decision** | Store task owner name in `ActivityLog.User` until JWT stretch is implemented |
+| **Why chosen** | Auth is a separate stretch item; owner is the best available actor identity today |
+| **Alternative considered** | Hardcode "System"; defer activity log until auth |
+| **Trade-off** | User field does not reflect who performed the action in multi-user scenarios |
+| **Impact** | `TaskService` passes `existing.Owner?.Name ?? "System"` to activity logger |
+| **Date** | 2026-07-09 |
+
+---
+
 *Append new decisions below.*

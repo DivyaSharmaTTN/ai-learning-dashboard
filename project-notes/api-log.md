@@ -31,6 +31,17 @@
 
 ---
 
+## GET `/api/tasks/{id}/activity`
+
+- **Purpose**: Audit history for a task (stretch: activity log)
+- **Response 200**: `[{ id, taskId, action, previousValue, newValue, user, timestamp }]`
+- **Response 404**: Task not found
+- **Actions logged**: `Created`, `Updated`, `StatusChanged` (on POST/PUT/PATCH task)
+- **User field**: Task owner name until JWT auth is added
+- **Used by**: `TaskDetailPage`, `ActivityHistory`
+
+---
+
 ## POST `/api/tasks`
 
 - **Purpose**: Create task
@@ -70,4 +81,4 @@
 
 ---
 
-*Last updated: 2026-07-03*
+*Last updated: 2026-07-09*

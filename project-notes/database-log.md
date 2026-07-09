@@ -31,9 +31,22 @@
 | CreatedAt | TEXT | UTC |
 | UpdatedAt | TEXT | UTC |
 
+### ActivityLogs
+
+| Column | Type | Constraints |
+|--------|------|-------------|
+| Id | INTEGER | PK, auto-increment |
+| TaskId | INTEGER | FK → ProjectTasks.Id, CASCADE delete |
+| Action | TEXT | NOT NULL, max 50 (`Created`, `Updated`, `StatusChanged`) |
+| PreviousValue | TEXT | max 500, nullable |
+| NewValue | TEXT | max 500, nullable |
+| User | TEXT | NOT NULL, max 100 |
+| Timestamp | TEXT | UTC |
+
 ## Relationships
 
 - `ProjectTasks.OwnerId` → `Users.Id` (many-to-one)
+- `ActivityLogs.TaskId` → `ProjectTasks.Id` (many-to-one, cascade on task delete)
 
 ## Seed Data
 
@@ -48,10 +61,12 @@
 | Migration | Date | Description |
 |-----------|------|-------------|
 | `20260703101544_InitialCreate` | 2026-07-03 | Users + ProjectTasks + seed users |
+| `20260709111559_AddActivityLog` | 2026-07-09 | ActivityLogs table + FK/index (stretch) |
 
 ## Indexes
 
 - `IX_ProjectTasks_OwnerId` on `ProjectTasks.OwnerId`
+- `IX_ActivityLogs_TaskId` on `ActivityLogs.TaskId`
 
 ## Validation Rules
 
@@ -60,4 +75,4 @@
 
 ---
 
-*Last updated: 2026-07-03*
+*Last updated: 2026-07-09*

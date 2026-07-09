@@ -1,3 +1,6 @@
+// @branch feature/stretch-activity-log
+// @history 2026-07-09 — Activity log integration tests (create, status change, 404)
+
 using System.Net;
 using System.Net.Http.Json;
 using AiLearningDashboard.Api.Data;
@@ -220,5 +223,61 @@ public class TasksApiTests : IClassFixture<CustomWebApplicationFactory>
         var afterActive = await _client.GetFromJsonAsync<DashboardSummaryDto>("/api/dashboard/summary");
         Assert.NotNull(afterActive);
         Assert.Equal(afterCompleted.OverdueItems + 1, afterActive.OverdueItems);
+    }
+
+    [Fact]
+    public async Task CreateTask_CreatesActivityLogEntry()
+    {
+        var response = await _client.PostAsJsonAsync("/api/tasks", new CreateTaskDto
+        {
+            Title = "Activity Log Task",
+            Category = "Learning",
+            Priority = "Medium",
+            Status = "NotStarted",
+            OwnerId = 1,
+            DueDate = DateTime.UtcNow.AddDays(4)
+        });
+
+        var created = await response.Content.ReadFromJsonAsync<TaskDto>();
+        Assert.NotNull(created);
+
+        var activity = await _client.GetFromJsonAsync<List<ActivityLogDto>>($"/api/tasks/{created.Id}/activity");
+        Assert.NotNull(activity);
+        Assert.Single(activity);
+        Assert.Equal("Created", activity[0].Action);
+        Assert.Equal("Activity Log Task", activity[0].NewValue);
+        Assert.Equal("Alex Developer", activity[0].User);
+    }
+
+    [Fact]
+    public async Task UpdateTaskStatus_CreatesStatusChangeActivityLog()
+    {
+        var createResponse = await _client.PostAsJsonAsync("/api/tasks", new CreateTaskDto
+        {
+            Title = "Status Activity Task",
+            Category = "Project",
+            Priority = "Low",
+            Status = "NotStarted",
+            OwnerId = 1,
+            DueDate = DateTime.UtcNow.AddDays(2)
+        });
+
+        var created = await createResponse.Content.ReadFromJsonAsync<TaskDto>();
+        Assert.NotNull(created);
+
+        await _client.PatchAsJsonAsync(
+            $"/api/tasks/{created.Id}/status",
+            new UpdateTaskStatusDto { Status = "InProgress" });
+
+        var activity = await _client.GetFromJsonAsync<List<ActivityLogDto>>($"/api/tasks/{created.Id}/activity");
+        Assert.NotNull(activity);
+        Assert.Contains(activity, a => a.Action == "StatusChanged" && a.PreviousValue == "NotStarted" && a.NewValue == "InProgress");
+    }
+
+    [Fact]
+    public async Task GetTaskActivity_ForUnknownTask_ReturnsNotFound()
+    {
+        var response = await _client.GetAsync("/api/tasks/99999/activity");
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
 }

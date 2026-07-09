@@ -108,4 +108,22 @@
 
 ---
 
+## FL-007 — Activity Log / Audit History (Stretch)
+
+| Field | Value |
+|-------|-------|
+| **Feature name** | Persisted activity log and task detail audit history |
+| **Requirement** | Stretch: record Create, Update, StatusChanged; API retrieval; UI on task detail |
+| **Branch** | `feature/stretch-activity-log` |
+| **Files created** | `Entities/ActivityLog.cs`, `Repositories/ActivityLogRepository.cs`, `Services/ActivityLogService.cs`, `Migrations/20260709111559_AddActivityLog.cs`, `frontend/src/api/activity.ts`, `frontend/src/components/ActivityHistory.tsx` |
+| **Files modified** | `TaskService.cs`, `TasksController.cs`, `TaskDtos.cs`, `AppDbContext.cs`, `Program.cs`, `TaskDetailPage.tsx`, `types/index.ts`, `index.css`, `TasksApiTests.cs`, project notes |
+| **Database changes** | `ActivityLogs` table (FK → ProjectTasks, cascade delete); index on `TaskId` |
+| **API changes** | `GET /api/tasks/{id}/activity` — returns `ActivityLogDto[]`; logging on POST/PUT/PATCH task |
+| **Frontend changes** | `ActivityHistory` panel on task detail; `activityApi.getByTaskId()` |
+| **Testing added** | 3 xUnit tests (create log, status change log, 404); backend 11/11, frontend 8/8 |
+| **Status** | Complete |
+| **Date** | 2026-07-09 |
+
+---
+
 *Append new features below.*

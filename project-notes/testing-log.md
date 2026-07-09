@@ -12,8 +12,11 @@
 | CreateTask_WithInvalidOwner_ReturnsBadRequest | `TasksApiTests.cs` | ✅ Pass |
 | GetTasks_WithStatusFilter_ReturnsMatchingTasks | `TasksApiTests.cs` | ✅ Pass |
 | DashboardSummary_OverdueExcludesCompleted | `TasksApiTests.cs` | ✅ Pass |
+| CreateTask_CreatesActivityLogEntry | `TasksApiTests.cs` | ✅ Pass |
+| UpdateTaskStatus_CreatesStatusChangeActivityLog | `TasksApiTests.cs` | ✅ Pass |
+| GetTaskActivity_ForUnknownTask_ReturnsNotFound | `TasksApiTests.cs` | ✅ Pass |
 
-**Run**: `cd backend && dotnet test` — 8/8 passed
+**Run**: `cd backend && dotnet test` — 11/11 passed
 
 ## Frontend Tests (Vitest + RTL)
 
@@ -39,6 +42,9 @@
 | Dashboard count increment | BT-07 |
 | Overdue excludes completed | BT-08 (before/after assertion) |
 | Status filter | BT status filter test |
+| Activity log on create | CreateTask_CreatesActivityLogEntry |
+| Activity log on status change | UpdateTaskStatus_CreatesStatusChangeActivityLog |
+| Activity 404 for unknown task | GetTaskActivity_ForUnknownTask_ReturnsNotFound |
 | Frontend empty state | FT empty test |
 | Frontend form validation | TaskForm test |
 

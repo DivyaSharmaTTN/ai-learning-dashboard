@@ -70,7 +70,17 @@ Git workflow established. UI overhaul on `feature/modern-ai-dashboard-ui`.
 - [x] Premium summary cards, task cards, sidebar layout
 - [x] Charts, AI Insights, Recent Activity, Upcoming Deadlines
 - [x] Skeleton loading, enhanced toasts/transitions
-- [x] Tests updated (6/6 passing)
+- [x] Tests updated (8/8 passing)
+
+## Stretch: Activity Log (2026-07-09)
+
+- [x] `ActivityLog` entity + migration `AddActivityLog`
+- [x] `ActivityLogRepository` + `ActivityLogService`
+- [x] Log Created / Updated / StatusChanged in `TaskService`
+- [x] `GET /api/tasks/{id}/activity`
+- [x] `ActivityHistory` component on `TaskDetailPage`
+- [x] 3 activity log integration tests (11 backend total)
+- [x] Project notes and API contract updated
 
 ---
 

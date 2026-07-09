@@ -1,16 +1,19 @@
 /**
- * @branch feature/modern-ai-dashboard-ui
- * @history 2026-07-03 — Styled task detail page
+ * @branch feature/stretch-activity-log
+ * @history 2026-07-09 — Activity history panel on task detail page
+ * @history 2026-07-03 — Styled task detail page (feature/modern-ai-dashboard-ui)
  */
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { tasksApi } from '../api/tasks';
+import { activityApi } from '../api/activity';
 import { usersApi } from '../api/users';
+import { ActivityHistory } from '../components/ActivityHistory';
 import { ErrorState } from '../components/ErrorState';
 import { LoadingState } from '../components/LoadingState';
 import { TaskForm, taskToFormValues } from '../components/TaskForm';
 import { useToast } from '../context/ToastContext';
-import type { Task, User } from '../types';
+import type { ActivityLog, Task, User } from '../types';
 
 export function TaskDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -18,6 +21,7 @@ export function TaskDetailPage() {
   const { showSuccess } = useToast();
   const [task, setTask] = useState<Task | null>(null);
   const [users, setUsers] = useState<User[]>([]);
+  const [activityLogs, setActivityLogs] = useState<ActivityLog[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -31,10 +35,11 @@ export function TaskDetailPage() {
 
     setLoading(true);
     setError(null);
-    Promise.all([tasksApi.getById(taskId), usersApi.getAll()])
-      .then(([taskData, usersData]) => {
+    Promise.all([tasksApi.getById(taskId), usersApi.getAll(), activityApi.getByTaskId(taskId)])
+      .then(([taskData, usersData, logs]) => {
         setTask(taskData);
         setUsers(usersData);
+        setActivityLogs(logs);
       })
       .catch((err) =>
         setError(err instanceof Error ? err.message : 'Failed to load task'),
@@ -76,6 +81,8 @@ export function TaskDetailPage() {
           navigate('/');
         }}
       />
+
+      <ActivityHistory logs={activityLogs} />
     </div>
   );
 }

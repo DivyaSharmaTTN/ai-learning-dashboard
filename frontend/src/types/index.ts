@@ -1,3 +1,8 @@
+/**
+ * @branch feature/stretch-activity-log
+ * @history 2026-07-09 — ActivityLog type for audit history
+ * @history 2026-07-03 — Core task and dashboard types
+ */
 export type TaskPriority = 'Low' | 'Medium' | 'High';
 export type TaskStatus = 'NotStarted' | 'InProgress' | 'Completed';
 export type TaskCategory = 'Learning' | 'Project' | 'Certification' | 'Other';
@@ -47,4 +52,14 @@ export type UpdateTaskPayload = CreateTaskPayload;
 export interface TaskFilters {
   search?: string;
   status?: TaskStatus | '';
+}
+
+export interface ActivityLog {
+  id: number;
+  taskId: number;
+  action: string;
+  previousValue?: string | null;
+  newValue?: string | null;
+  user: string;
+  timestamp: string;
 }

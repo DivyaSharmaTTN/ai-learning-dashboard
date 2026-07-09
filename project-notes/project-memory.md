@@ -1,6 +1,6 @@
 # Project Memory
 
-> **Last updated**: 2026-07-03 — Git workflow established on `dev`
+> **Last updated**: 2026-07-09 — Activity log stretch on `feature/stretch-activity-log`
 
 ## Git Workflow
 
@@ -8,7 +8,7 @@
 |--------|---------------|
 | `main` | `413947a` — Initial project setup (baseline; do not recreate) |
 | `dev` | Integration branch for all merged features |
-| `feature/*` | Active development (current: `feature/git-workflow-setup`) |
+| `feature/*` | Active development (current: `feature/stretch-activity-log`) |
 
 **Policy**: Never commit directly to `main`. All new work branches from `dev`.
 
@@ -71,6 +71,18 @@ ai-learning-dashboard/
 | CreatedAt | DateTime | UTC |
 | UpdatedAt | DateTime | UTC |
 
+### ActivityLogs (stretch)
+
+| Column | Type | Notes |
+|--------|------|-------|
+| Id | int PK | |
+| TaskId | int FK | → ProjectTasks |
+| Action | string | Created, Updated, StatusChanged |
+| PreviousValue | string? | optional |
+| NewValue | string? | optional |
+| User | string | actor (owner name until auth) |
+| Timestamp | DateTime | UTC |
+
 ## API Endpoints
 
 | Method | Route | Status |
@@ -78,6 +90,7 @@ ai-learning-dashboard/
 | GET | `/api/users` | ✅ Implemented |
 | GET | `/api/tasks` | ✅ Implemented |
 | GET | `/api/tasks/{id}` | ✅ Implemented |
+| GET | `/api/tasks/{id}/activity` | ✅ Implemented (stretch: activity log) |
 | POST | `/api/tasks` | ✅ Implemented |
 | PUT | `/api/tasks/{id}` | ✅ Implemented |
 | PATCH | `/api/tasks/{id}/status` | ✅ Implemented |
@@ -90,8 +103,9 @@ ai-learning-dashboard/
 | Documentation scaffold | ✅ Complete |
 | Backend API | ✅ Complete |
 | Frontend UI | ✅ Complete (modern AI SaaS overhaul) |
-| Backend tests | ✅ 6 passing |
-| Frontend tests | ✅ 6 passing |
+| Backend tests | ✅ 11 passing |
+| Frontend tests | ✅ 8 passing |
+| Stretch: activity log | ✅ Complete |
 | README | ✅ Complete |
 | Manual E2E verification | ⏳ Recommended |
 
@@ -106,13 +120,14 @@ ai-learning-dashboard/
 - FluentValidation on create/update DTOs
 - React + Vite frontend with modern AI SaaS UI (charts, dark mode, insights)
 - Loading, empty, success (toast), error UI states
-- xUnit integration tests (6) and Vitest component tests (6)
+- xUnit integration tests (11) and Vitest component tests (8)
+- Activity log: `ActivityLogs` table, audit API, task detail history panel (stretch)
 
 ## Pending Work
 
 1. Manual end-to-end verification with both servers running
-2. Git commits on feature branches (user action)
-3. Fill `[COMMIT_HASH_PLACEHOLDER]` in prompt history after commits
+2. Merge stretch and core feature branches → `dev`
+3. Remaining stretch features (filters, pagination, auth, etc.)
 
 ## Important Decisions
 
@@ -122,7 +137,8 @@ ai-learning-dashboard/
 | Vite + React TS | Modern, fast dev experience |
 | FluentValidation | Clear backend validation messages |
 | String enum JSON | Readable API responses for React |
-| No auth | Out of assessment scope |
+| Activity log user = owner name | JWT auth not yet implemented (stretch) |
+| No auth (core) | Out of assessment scope; auth planned as stretch |
 
 ## Design Trade-offs
 

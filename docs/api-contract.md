@@ -1,6 +1,6 @@
 # API Contract
 
-> **Status**: Implemented — matches running API (2026-07-03)
+> **Status**: Implemented — matches running API (2026-07-09; activity log stretch added)
 
 **Base URL (development)**: `http://localhost:5000` or `https://localhost:5001`
 
@@ -66,6 +66,39 @@ List tasks with optional filters.
 ### GET `/api/tasks/{id}`
 
 **Response 200**: Single task object (same shape as list item).
+
+**Response 404**: Task not found.
+
+### GET `/api/tasks/{id}/activity`
+
+Returns persisted audit history for a task (stretch: activity log).
+
+**Response 200**
+
+```json
+[
+  {
+    "id": 1,
+    "taskId": 5,
+    "action": "Created",
+    "previousValue": null,
+    "newValue": "Learn React hooks",
+    "user": "Alex Developer",
+    "timestamp": "2026-07-09T10:00:00Z"
+  },
+  {
+    "id": 2,
+    "taskId": 5,
+    "action": "StatusChanged",
+    "previousValue": "NotStarted",
+    "newValue": "InProgress",
+    "user": "Alex Developer",
+    "timestamp": "2026-07-09T11:30:00Z"
+  }
+]
+```
+
+**Actions**: `Created`, `Updated`, `StatusChanged` — written automatically on POST/PUT/PATCH task.
 
 **Response 404**: Task not found.
 

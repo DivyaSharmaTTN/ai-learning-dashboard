@@ -1,3 +1,6 @@
+// @branch feature/stretch-activity-log
+// @history 2026-07-09 — GET /api/tasks/{id}/activity endpoint
+
 using AiLearningDashboard.Api.DTOs;
 using AiLearningDashboard.Api.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -6,7 +9,7 @@ namespace AiLearningDashboard.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class TasksController(ITaskService taskService) : ControllerBase
+public class TasksController(ITaskService taskService, IActivityLogService activityLogService) : ControllerBase
 {
     [HttpGet]
     public async Task<ActionResult<List<TaskDto>>> GetAll(
@@ -28,6 +31,21 @@ public class TasksController(ITaskService taskService) : ControllerBase
         }
 
         return Ok(task);
+    }
+
+    [HttpGet("{id:int}/activity")]
+    public async Task<ActionResult<List<ActivityLogDto>>> GetActivity(
+        int id,
+        CancellationToken cancellationToken)
+    {
+        var task = await taskService.GetByIdAsync(id, cancellationToken);
+        if (task is null)
+        {
+            return NotFound(new { message = "Task not found." });
+        }
+
+        var activity = await activityLogService.GetByTaskIdAsync(id, cancellationToken);
+        return Ok(activity);
     }
 
     [HttpPost]
