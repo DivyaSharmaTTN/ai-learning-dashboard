@@ -144,8 +144,9 @@ ai-learning-dashboard/
 | FluentValidation | Clear backend validation messages |
 | String enum JSON | Readable API responses for React |
 | Activity log user = owner name | JWT auth not yet implemented (stretch) |
+| JWT auth stretch | `feature/stretch-auth-rbac`: BCrypt + Bearer JWT; Admin/User roles |
 | Canonical git-workflow rule | `.cursor/rules/git-workflow.mdc`; append-only docs on every change |
-| No auth (core) | Out of assessment scope; auth planned as stretch |
+| No auth (core) | Out of assessment scope; auth implemented as stretch on `feature/stretch-auth-rbac` |
 
 ## Design Trade-offs
 
@@ -158,8 +159,8 @@ ai-learning-dashboard/
 
 ## Future Improvements
 
-- Authentication
 - React Query for caching
 - Swagger UI in production README
 - GitHub Actions CI
 - Sorting on task list
+- Refresh token / token rotation

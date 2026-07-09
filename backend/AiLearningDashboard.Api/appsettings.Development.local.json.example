@@ -1,0 +1,5 @@
+{
+  "Jwt": {
+    "Key": "YOUR_LOCAL_JWT_SECRET_MIN_32_CHARACTERS"
+  }
+}

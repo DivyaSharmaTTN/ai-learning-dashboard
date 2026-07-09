@@ -1,11 +1,14 @@
 using AiLearningDashboard.Api.DTOs;
+using AiLearningDashboard.Api.Entities;
 using AiLearningDashboard.Api.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AiLearningDashboard.Api.Controllers;
 
 [ApiController]
 [Route("api/dashboard")]
+[Authorize(Roles = AuthRoles.Admin)]
 public class DashboardController(IDashboardService dashboardService) : ControllerBase
 {
     [HttpGet("summary")]

@@ -10,6 +10,7 @@ public class TaskListQuery
     public TaskStatus? Status { get; set; }
     public TaskPriority? Priority { get; set; }
     public TaskCategory? Category { get; set; }
+    public int? OwnerId { get; set; }
     public int? Page { get; set; }
     public int? PageSize { get; set; }
 }

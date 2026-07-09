@@ -1,15 +1,17 @@
 /**
- * @branch feature/fix-search-debounce
- * @history 2026-07-06 — Removed duplicate topbar search; topbar shows page title only
+ * @branch feature/stretch-auth-rbac
+ * @history 2026-07-09 — Dynamic user display, logout, role-based nav
  */
 import {
   Bell,
   LayoutDashboard,
   ListTodo,
+  LogOut,
   Sparkles,
   Zap,
 } from 'lucide-react';
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import { ThemeToggle } from './ui/ThemeToggle';
 
 const pageTitles: Record<string, string> = {
@@ -27,9 +29,19 @@ function getPageTitle(pathname: string): string {
   return 'Dashboard';
 }
 
+function getInitials(name: string): string {
+  return name
+    .split(' ')
+    .map((part) => part[0])
+    .join('')
+    .slice(0, 2)
+    .toUpperCase();
+}
+
 export function Layout() {
   const location = useLocation();
   const pageTitle = getPageTitle(location.pathname);
+  const { user, isAdmin, logout } = useAuth();
 
   return (
     <div className="app-shell">
@@ -52,24 +64,28 @@ export function Layout() {
             <LayoutDashboard size={18} />
             Dashboard
           </NavLink>
-          <NavLink
-            to="/tasks/new"
-            className={({ isActive }) => `nav-link ${isActive ? 'nav-link--active' : ''}`}
-          >
-            <ListTodo size={18} />
-            New Task
-          </NavLink>
+          {isAdmin && (
+            <NavLink
+              to="/tasks/new"
+              className={({ isActive }) => `nav-link ${isActive ? 'nav-link--active' : ''}`}
+            >
+              <ListTodo size={18} />
+              New Task
+            </NavLink>
+          )}
         </nav>
 
-        <div className="sidebar-promo glass-card">
-          <div className="promo-glow" aria-hidden="true" />
-          <Sparkles size={20} className="promo-icon" />
-          <strong>Learning Pro</strong>
-          <p>Unlock advanced AI insights and analytics</p>
-          <Link to="/tasks/new" className="btn btn-primary btn-sm btn-block">
-            Get Started
-          </Link>
-        </div>
+        {isAdmin && (
+          <div className="sidebar-promo glass-card">
+            <div className="promo-glow" aria-hidden="true" />
+            <Sparkles size={20} className="promo-icon" />
+            <strong>Learning Pro</strong>
+            <p>Unlock advanced AI insights and analytics</p>
+            <Link to="/tasks/new" className="btn btn-primary btn-sm btn-block">
+              Get Started
+            </Link>
+          </div>
+        )}
       </aside>
 
       <div className="app-content">
@@ -82,11 +98,14 @@ export function Layout() {
               <span className="notification-dot" />
             </button>
             <ThemeToggle />
+            <button type="button" className="icon-btn" aria-label="Sign out" onClick={logout}>
+              <LogOut size={18} />
+            </button>
             <div className="user-chip">
-              <div className="user-avatar">AD</div>
+              <div className="user-avatar">{user ? getInitials(user.name) : '?'}</div>
               <div className="user-info">
-                <span className="user-name">Alex Developer</span>
-                <span className="user-role">Premium</span>
+                <span className="user-name">{user?.name ?? 'User'}</span>
+                <span className="user-role">{user?.role ?? ''}</span>
               </div>
             </div>
           </div>

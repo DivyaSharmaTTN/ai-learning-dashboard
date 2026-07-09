@@ -1,6 +1,6 @@
 # Project Context (Cursor)
 
-> **Last updated**: 2026-07-09 — Stretch filters + pagination on `feature/stretch-filters-pagination`
+> **Last updated**: 2026-07-09 — JWT auth RBAC on `feature/stretch-auth-rbac`
 
 ## What This Project Is
 
@@ -12,7 +12,7 @@ AI Learning Dashboard — a frontend-heavy assessment app for tracking learning 
 |------|-------|
 | **Stable branch** | `main` — initial commit `413947a` (`Initial project setup`); **do not recreate history** |
 | **Integration branch** | `dev` |
-| **Feature branches** | `feature/stretch-filters-pagination`, `feature/stretch-activity-log`, others (see `TASKS.md`) |
+| **Feature branches** | `feature/stretch-auth-rbac`, `feature/stretch-filters-pagination`, others (see `TASKS.md`) |
 | **Stack** | React + Vite, ASP.NET Core, EF Core SQLite |
 | **Cursor rules** | `.cursor/rules/git-workflow.mdc` (`alwaysApply: true`) |
 
@@ -54,8 +54,8 @@ See **`.cursor/rules/git-workflow.mdc`** for full rules. Summary:
 
 ## Current Focus
 
-- Stretch: filters + pagination complete on `feature/stretch-filters-pagination`
-- Merge stretch feature branches → `dev`; manual E2E verification
+- Stretch: JWT auth + RBAC complete on `feature/stretch-auth-rbac`
+- Merge stretch feature branches → `dev`; manual E2E with login as Admin/User
 - All agents must follow `.cursor/rules/git-workflow.mdc` on every task
 
 ## Standards

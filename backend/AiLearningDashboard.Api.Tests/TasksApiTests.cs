@@ -4,36 +4,9 @@
 
 using System.Net;
 using System.Net.Http.Json;
-using AiLearningDashboard.Api.Data;
 using AiLearningDashboard.Api.DTOs;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace AiLearningDashboard.Api.Tests;
-
-public class CustomWebApplicationFactory : WebApplicationFactory<Program>
-{
-    private readonly string _dbName = $"TestDb_{Guid.NewGuid()}";
-
-    protected override void ConfigureWebHost(IWebHostBuilder builder)
-    {
-        builder.ConfigureServices(services =>
-        {
-            var descriptor = services.SingleOrDefault(
-                d => d.ServiceType == typeof(DbContextOptions<AppDbContext>));
-
-            if (descriptor is not null)
-            {
-                services.Remove(descriptor);
-            }
-
-            services.AddDbContext<AppDbContext>(options =>
-                options.UseSqlite($"Data Source={_dbName}.db"));
-        });
-    }
-}
 
 public class TasksApiTests : IClassFixture<CustomWebApplicationFactory>
 {
@@ -44,9 +17,16 @@ public class TasksApiTests : IClassFixture<CustomWebApplicationFactory>
         _client = factory.CreateClient();
     }
 
+    private async Task AuthenticateAsAdminAsync()
+    {
+        var token = await AuthTestHelper.LoginAsAdminAsync(_client);
+        AuthTestHelper.SetBearerToken(_client, token);
+    }
+
     [Fact]
     public async Task CreateTask_WithValidData_ReturnsCreated()
     {
+        await AuthenticateAsAdminAsync();
         var dto = new CreateTaskDto
         {
             Title = "Learn EF Core",
@@ -69,6 +49,7 @@ public class TasksApiTests : IClassFixture<CustomWebApplicationFactory>
     [Fact]
     public async Task CreateTask_WithEmptyTitle_ReturnsBadRequest()
     {
+        await AuthenticateAsAdminAsync();
         var dto = new CreateTaskDto
         {
             Title = "",
@@ -87,6 +68,7 @@ public class TasksApiTests : IClassFixture<CustomWebApplicationFactory>
     [Fact]
     public async Task GetTasks_AfterCreate_ReturnsTaskInList()
     {
+        await AuthenticateAsAdminAsync();
         var dto = new CreateTaskDto
         {
             Title = "Integration Test Task",
@@ -108,6 +90,7 @@ public class TasksApiTests : IClassFixture<CustomWebApplicationFactory>
     [Fact]
     public async Task UpdateTaskStatus_ToInProgress_ReturnsUpdatedStatus()
     {
+        await AuthenticateAsAdminAsync();
         var createResponse = await _client.PostAsJsonAsync("/api/tasks", new CreateTaskDto
         {
             Title = "Status Update Task",
@@ -133,6 +116,7 @@ public class TasksApiTests : IClassFixture<CustomWebApplicationFactory>
     [Fact]
     public async Task DashboardSummary_UpdatesAfterCreate()
     {
+        await AuthenticateAsAdminAsync();
         var before = await _client.GetFromJsonAsync<DashboardSummaryDto>("/api/dashboard/summary");
         Assert.NotNull(before);
 
@@ -156,6 +140,7 @@ public class TasksApiTests : IClassFixture<CustomWebApplicationFactory>
     [Fact]
     public async Task CreateTask_WithInvalidOwner_ReturnsBadRequest()
     {
+        await AuthenticateAsAdminAsync();
         var dto = new CreateTaskDto
         {
             Title = "Invalid Owner Task",
@@ -174,6 +159,7 @@ public class TasksApiTests : IClassFixture<CustomWebApplicationFactory>
     [Fact]
     public async Task GetTasks_WithStatusFilter_ReturnsMatchingTasks()
     {
+        await AuthenticateAsAdminAsync();
         await _client.PostAsJsonAsync("/api/tasks", new CreateTaskDto
         {
             Title = "Filter In Progress Task",
@@ -194,6 +180,7 @@ public class TasksApiTests : IClassFixture<CustomWebApplicationFactory>
     [Fact]
     public async Task DashboardSummary_OverdueExcludesCompleted()
     {
+        await AuthenticateAsAdminAsync();
         var before = await _client.GetFromJsonAsync<DashboardSummaryDto>("/api/dashboard/summary");
         Assert.NotNull(before);
 
@@ -229,6 +216,7 @@ public class TasksApiTests : IClassFixture<CustomWebApplicationFactory>
     [Fact]
     public async Task CreateTask_CreatesActivityLogEntry()
     {
+        await AuthenticateAsAdminAsync();
         var response = await _client.PostAsJsonAsync("/api/tasks", new CreateTaskDto
         {
             Title = "Activity Log Task",
@@ -253,6 +241,7 @@ public class TasksApiTests : IClassFixture<CustomWebApplicationFactory>
     [Fact]
     public async Task UpdateTaskStatus_CreatesStatusChangeActivityLog()
     {
+        await AuthenticateAsAdminAsync();
         var createResponse = await _client.PostAsJsonAsync("/api/tasks", new CreateTaskDto
         {
             Title = "Status Activity Task",
@@ -278,6 +267,7 @@ public class TasksApiTests : IClassFixture<CustomWebApplicationFactory>
     [Fact]
     public async Task GetTaskActivity_ForUnknownTask_ReturnsNotFound()
     {
+        await AuthenticateAsAdminAsync();
         var response = await _client.GetAsync("/api/tasks/99999/activity");
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
@@ -285,6 +275,7 @@ public class TasksApiTests : IClassFixture<CustomWebApplicationFactory>
     [Fact]
     public async Task GetTasks_WithPriorityFilter_ReturnsMatchingTasks()
     {
+        await AuthenticateAsAdminAsync();
         await _client.PostAsJsonAsync("/api/tasks", new CreateTaskDto
         {
             Title = "High Priority Filter Task",
@@ -305,6 +296,7 @@ public class TasksApiTests : IClassFixture<CustomWebApplicationFactory>
     [Fact]
     public async Task GetTasks_WithCategoryFilter_ReturnsMatchingTasks()
     {
+        await AuthenticateAsAdminAsync();
         await _client.PostAsJsonAsync("/api/tasks", new CreateTaskDto
         {
             Title = "Certification Filter Task",
@@ -325,6 +317,7 @@ public class TasksApiTests : IClassFixture<CustomWebApplicationFactory>
     [Fact]
     public async Task GetTasks_WithPagination_ReturnsPagedResult()
     {
+        await AuthenticateAsAdminAsync();
         for (var i = 0; i < 12; i++)
         {
             await _client.PostAsJsonAsync("/api/tasks", new CreateTaskDto

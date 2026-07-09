@@ -1,9 +1,17 @@
 # Frontend Components
 
 > Document each component as implemented.  
-> **Branch**: `feature/stretch-filters-pagination` (2026-07-09 filters + pagination)
+> **Branch**: `feature/stretch-auth-rbac` (2026-07-09 JWT auth + RBAC)
 
 ---
+
+## AuthContext / LoginPage / ProtectedRoute / AdminRoute
+
+- **Purpose**: JWT session management, login UI, route guards
+- **API**: `POST /api/auth/login`; Bearer token on all protected API calls via `api/client.ts`
+- **Storage**: `sessionStorage` key `ai-dashboard-auth`
+- **Roles**: `Admin` — full UI + task CRUD; `User` — assigned task list + status updates only (no create)
+- **LoginPage**: Branded card, input icons, password toggle, validation, loading state, demo accounts accordion
 
 ## ActivityHistory
 
@@ -15,11 +23,11 @@
 
 ## Layout
 
-- **Purpose**: Sidebar shell + topbar with page title, theme toggle, notifications placeholder, user profile
-- **Props**: None
+- **Purpose**: Sidebar shell + topbar with page title, theme toggle, logout, dynamic user profile
+- **Props**: None (uses `useAuth()`)
 - **API dependency**: None
 - **Reusable**: Yes
-- **Notes**: Topbar no longer includes a search input (removed duplicate of Tasks section search)
+- **Notes**: "New Task" nav and promo card visible to Admin only
 
 ## SummaryCards
 

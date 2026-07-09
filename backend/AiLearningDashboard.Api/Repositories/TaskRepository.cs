@@ -105,6 +105,11 @@ public class TaskRepository(AppDbContext dbContext) : ITaskRepository
                 t.Description.ToLower().Contains(term));
         }
 
+        if (query.OwnerId.HasValue)
+        {
+            dbQuery = dbQuery.Where(t => t.OwnerId == query.OwnerId.Value);
+        }
+
         return dbQuery;
     }
 }

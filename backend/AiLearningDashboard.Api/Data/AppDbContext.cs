@@ -1,5 +1,5 @@
-// @branch feature/stretch-activity-log
-// @history 2026-07-09 — ActivityLogs DbSet and entity configuration
+// @branch feature/stretch-auth-rbac
+// @history 2026-07-09 — JWT authentication, auth users seed, PasswordHash column
 
 using AiLearningDashboard.Api.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -20,6 +20,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             entity.Property(u => u.Name).IsRequired().HasMaxLength(100);
             entity.Property(u => u.Email).IsRequired().HasMaxLength(200);
             entity.Property(u => u.Role).IsRequired().HasMaxLength(50);
+            entity.Property(u => u.PasswordHash).HasMaxLength(200);
         });
 
         modelBuilder.Entity<ProjectTask>(entity =>
@@ -58,10 +59,29 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
 
     private static void SeedUsers(ModelBuilder modelBuilder)
     {
+        const string adminHash = "$2a$11$gsfid97c/CljebQP2Z5lTeiVFSOZknEphwqEPexaeneC7qi2FiKTq";
+        const string userHash = "$2a$11$CMgFLHIxu35vejD7B29V8ugr0877Jqrx.DtdGZIkVzZDyIuKJRy9e";
+
         modelBuilder.Entity<User>().HasData(
             new User { Id = 1, Name = "Alex Developer", Email = "alex@example.com", Role = "Developer" },
             new User { Id = 2, Name = "Sam Learner", Email = "sam@example.com", Role = "Learner" },
-            new User { Id = 3, Name = "Jordan Lead", Email = "jordan@example.com", Role = "Lead" }
+            new User { Id = 3, Name = "Jordan Lead", Email = "jordan@example.com", Role = "Lead" },
+            new User
+            {
+                Id = 4,
+                Name = "Admin",
+                Email = "admin@example.com",
+                Role = AuthRoles.Admin,
+                PasswordHash = adminHash
+            },
+            new User
+            {
+                Id = 5,
+                Name = "User",
+                Email = "user@example.com",
+                Role = AuthRoles.User,
+                PasswordHash = userHash
+            }
         );
     }
 }

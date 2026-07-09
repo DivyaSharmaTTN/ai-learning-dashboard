@@ -20,7 +20,16 @@
 | GetTasks_WithCategoryFilter_ReturnsMatchingTasks | `TasksApiTests.cs` | ✅ Pass |
 | GetTasks_WithPagination_ReturnsPagedResult | `TasksApiTests.cs` | ✅ Pass |
 
-**Run**: `cd backend && dotnet test` — 14/14 passed
+| Login_WithValidAdminCredentials_ReturnsToken | `AuthApiTests.cs` | ✅ Pass |
+| Login_WithValidUserCredentials_ReturnsToken | `AuthApiTests.cs` | ✅ Pass |
+| Login_WithInvalidPassword_ReturnsUnauthorized | `AuthApiTests.cs` | ✅ Pass |
+| GetTasks_WithoutToken_ReturnsUnauthorized | `AuthApiTests.cs` | ✅ Pass |
+| DashboardSummary_AsUser_ReturnsForbidden | `AuthApiTests.cs` | ✅ Pass |
+| CreateTask_AsUser_ReturnsForbidden | `AuthApiTests.cs` | ✅ Pass |
+| User_CanViewOnlyAssignedTasks | `AuthApiTests.cs` | ✅ Pass |
+| User_CanUpdateStatusOnOwnTask_ButNotOthers | `AuthApiTests.cs` | ✅ Pass |
+
+**Run**: `cd backend && dotnet test` — 22/22 passed (task tests use admin JWT via `AuthTestHelper`)
 
 ## Frontend Tests (Vitest + RTL)
 
@@ -35,8 +44,12 @@
 | Debounced search (list-only) | `DashboardPage.test.tsx` | ✅ Pass |
 | Search button immediate apply | `DashboardPage.test.tsx` | ✅ Pass |
 | Priority filter resets page 1 | `DashboardPage.test.tsx` | ✅ Pass |
+| LoginPage renders sign in form | `LoginPage.test.tsx` | ✅ Pass |
+| LoginPage validation + password toggle | `LoginPage.test.tsx` | ✅ Pass |
+| LoginPage calls login on submit | `LoginPage.test.tsx` | ✅ Pass |
+| User empty state without create CTA | `DashboardPage.test.tsx` | ✅ Pass |
 
-**Run**: `cd frontend && npm test` — 9/9 passed
+**Run**: `cd frontend && npm test` — 14/14 passed
 
 ## Edge Cases Covered
 
@@ -53,6 +66,10 @@
 | Activity log on create | CreateTask_CreatesActivityLogEntry |
 | Activity log on status change | UpdateTaskStatus_CreatesStatusChangeActivityLog |
 | Activity 404 for unknown task | GetTaskActivity_ForUnknownTask_ReturnsNotFound |
+| JWT login valid/invalid | AuthApiTests |
+| Unauthorized without token | GetTasks_WithoutToken_ReturnsUnauthorized |
+| User forbidden on admin endpoints | DashboardSummary_AsUser, CreateTask_AsUser |
+| User scoped task list + status | User_CanViewOnlyAssignedTasks, User_CanUpdateStatusOnOwnTask |
 | Frontend empty state | FT empty test |
 | Frontend form validation | TaskForm test |
 
@@ -63,4 +80,4 @@
 
 ---
 
-*Last updated: 2026-07-09 — feature/stretch-filters-pagination*
+*Last updated: 2026-07-09 — auth UI review (User permissions + login redesign)*

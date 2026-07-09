@@ -1,5 +1,6 @@
 using AiLearningDashboard.Api.Data;
 using AiLearningDashboard.Api.DTOs;
+using AiLearningDashboard.Api.Entities;
 using Microsoft.EntityFrameworkCore;
 using TaskStatus = AiLearningDashboard.Api.Entities.TaskStatus;
 
@@ -8,6 +9,7 @@ namespace AiLearningDashboard.Api.Repositories;
 public interface IUserRepository
 {
     Task<List<UserDto>> GetAllAsync(CancellationToken cancellationToken = default);
+    Task<User?> GetByEmailAsync(string email, CancellationToken cancellationToken = default);
 }
 
 public class UserRepository(AppDbContext dbContext) : IUserRepository
@@ -24,6 +26,12 @@ public class UserRepository(AppDbContext dbContext) : IUserRepository
                 Role = u.Role
             })
             .ToListAsync(cancellationToken);
+    }
+
+    public async Task<User?> GetByEmailAsync(string email, CancellationToken cancellationToken = default)
+    {
+        return await dbContext.Users
+            .FirstOrDefaultAsync(u => u.Email == email, cancellationToken);
     }
 }
 

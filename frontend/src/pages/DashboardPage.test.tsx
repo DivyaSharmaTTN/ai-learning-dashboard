@@ -18,6 +18,21 @@ vi.mock('../api/dashboard', () => ({
   dashboardApi: { getSummary: vi.fn() },
 }));
 
+vi.mock('../context/AuthContext', () => ({
+  useAuth: () => mockUseAuth(),
+}));
+
+const mockUseAuth = vi.fn(() => ({
+  user: { id: 4, name: 'Admin', email: 'admin@example.com', role: 'Admin' },
+  token: 'test-token',
+  isAuthenticated: true,
+  isAdmin: true,
+  isUser: false,
+  loading: false,
+  login: vi.fn(),
+  logout: vi.fn(),
+}));
+
 vi.mock('../api/tasks', async (importOriginal) => {
   const actual = await importOriginal<typeof import('../api/tasks')>();
   return {
@@ -171,7 +186,46 @@ describe('DashboardPage', () => {
 
     renderDashboard();
 
-    expect(await screen.findByText(/no tasks found/i)).toBeInTheDocument();
+    expect(await screen.findByText(/no tasks yet/i)).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Create your first task' })).toBeInTheDocument();
+  });
+
+  it('shows user-specific empty state without create action', async () => {
+    mockUseAuth.mockReturnValue({
+      user: { id: 5, name: 'User', email: 'user@example.com', role: 'User' },
+      token: 'test-token',
+      isAuthenticated: true,
+      isAdmin: false,
+      isUser: true,
+      loading: false,
+      login: vi.fn(),
+      logout: vi.fn(),
+    });
+
+    vi.mocked(tasksApi.getPaged).mockResolvedValue({
+      items: [],
+      totalCount: 0,
+      page: 1,
+      pageSize: 10,
+      totalPages: 0,
+    });
+
+    renderDashboard();
+
+    expect(await screen.findByText(/no assigned tasks/i)).toBeInTheDocument();
+    expect(screen.getByText(/contact an admin/i)).toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: 'Create your first task' })).not.toBeInTheDocument();
+
+    mockUseAuth.mockReturnValue({
+      user: { id: 4, name: 'Admin', email: 'admin@example.com', role: 'Admin' },
+      token: 'test-token',
+      isAuthenticated: true,
+      isAdmin: true,
+      isUser: false,
+      loading: false,
+      login: vi.fn(),
+      logout: vi.fn(),
+    });
   });
 
   it('updates status via quick action', async () => {

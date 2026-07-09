@@ -7,7 +7,7 @@
 ```
 ┌─────────────────────┐     HTTP/JSON      ┌─────────────────────────┐
 │  React SPA (Vite)   │ ◄────────────────► │  ASP.NET Core Web API   │
-│  localhost:5173     │                    │  localhost:5000         │
+│  localhost:5173     │   Bearer JWT       │  localhost:5000         │
 └─────────────────────┘                    └───────────┬─────────────┘
                                                        │
                                                        ▼
@@ -16,6 +16,12 @@
                                            │  learningdashboard.db   │
                                            └─────────────────────────┘
 ```
+
+## Authentication
+
+- **Login**: `POST /api/auth/login` → JWT (HS256)
+- **Storage**: Frontend `sessionStorage`; secret in `appsettings.Development.json` or `Jwt__Key` env var
+- **Roles**: `Admin` (full CRUD + dashboard), `User` (own tasks + status PATCH only; cannot create tasks)
 
 ## Backend Layers
 
@@ -27,7 +33,7 @@ Controllers  →  Services  →  Repositories  →  AppDbContext
 
 | Layer | Responsibility |
 |-------|----------------|
-| **Controllers** | HTTP routing, status codes (`TasksController`, `DashboardController`, `UsersController`) |
+| **Controllers** | HTTP routing, status codes, `[Authorize]` (`AuthController`, `TasksController`, `DashboardController`, `UsersController`) |
 | **Services** | Business rules, DTO mapping, owner validation, activity logging |
 | **Repositories** | EF queries; dashboard counts; activity log persistence |
 | **DbContext** | Entities, migrations, seed users (`Users`, `ProjectTasks`, `ActivityLogs`) |
@@ -35,21 +41,19 @@ Controllers  →  Services  →  Repositories  →  AppDbContext
 ## Frontend Structure
 
 ```
-App (ThemeProvider + Router + ToastProvider)
-├── Layout (sidebar + theme toggle)
-├── DashboardPage
-│   ├── SummaryCards (icons, animations)
-│   ├── TaskStatusChart / WeeklyProgressChart (Recharts)
-│   ├── AiInsights / RecentActivity / UpcomingDeadlines
-│   ├── SearchFilter / TaskList / TaskListItem
-│   └── DashboardSkeleton (loading)
-├── CreateTaskPage → TaskForm
-└── TaskDetailPage → TaskForm + ActivityHistory
+App (ThemeProvider + AuthProvider + Router + ToastProvider)
+├── /login → LoginPage
+├── ProtectedRoute
+│   └── Layout (sidebar + logout + role-based nav)
+│       ├── DashboardPage (Admin: full; User: task list only)
+│       ├── CreateTaskPage → TaskForm (Admin only)
+│       └── TaskDetailPage → TaskForm (read-only for User) + ActivityHistory
 ```
 
 | Module | Role |
 |--------|------|
-| `src/api/` | HTTP client; no hardcoded dashboard data |
+| `src/api/` | HTTP client with JWT Bearer; `auth.ts` for login |
+| `src/context/AuthContext.tsx` | Login/logout, role helpers, token persistence |
 | `src/components/ui/` | Avatar, Skeleton, ThemeToggle |
 | `src/components/dashboard/` | Charts, insights, activity panels |
 | `src/context/ThemeContext.tsx` | Light/dark mode (`localStorage`) |
@@ -57,7 +61,7 @@ App (ThemeProvider + Router + ToastProvider)
 
 ## Data Model
 
-- **User** (seeded): id, name, email, role
+- **User** (seeded): id, name, email, role, passwordHash? (BCrypt for auth users)
 - **ProjectTask**: id, title, description, category, priority, status, ownerId, dueDate, createdAt, updatedAt
 - **ActivityLog** (stretch): id, taskId, action, previousValue, newValue, user, timestamp
 
@@ -78,9 +82,9 @@ main          ← stable; initial commit only baseline (413947a)
 
 ## Test Architecture
 
-- **Backend**: xUnit + `WebApplicationFactory`, SQLite test DB (11 tests)
-- **Frontend**: Vitest + RTL, mocked API modules (8 tests)
+- **Backend**: xUnit + `WebApplicationFactory`, SQLite test DB (22 tests)
+- **Frontend**: Vitest + RTL, mocked API modules (11 tests)
 
 ---
 
-*Last updated: 2026-07-09 — activity log stretch*
+*Last updated: 2026-07-09 — JWT auth RBAC stretch*

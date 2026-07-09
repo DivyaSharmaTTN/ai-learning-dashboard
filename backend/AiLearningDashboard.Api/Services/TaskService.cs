@@ -11,26 +11,26 @@ namespace AiLearningDashboard.Api.Services;
 
 public interface ITaskService
 {
-    Task<List<TaskDto>> GetAllAsync(TaskQueryDto query, CancellationToken cancellationToken = default);
-    Task<PagedResultDto<TaskDto>> GetPagedAsync(TaskQueryDto query, CancellationToken cancellationToken = default);
+    Task<List<TaskDto>> GetAllAsync(TaskQueryDto query, int? ownerIdFilter = null, CancellationToken cancellationToken = default);
+    Task<PagedResultDto<TaskDto>> GetPagedAsync(TaskQueryDto query, int? ownerIdFilter = null, CancellationToken cancellationToken = default);
     Task<TaskDto?> GetByIdAsync(int id, CancellationToken cancellationToken = default);
     Task<(TaskDto? Task, string? Error)> CreateAsync(CreateTaskDto dto, CancellationToken cancellationToken = default);
     Task<(TaskDto? Task, string? Error)> UpdateAsync(int id, UpdateTaskDto dto, CancellationToken cancellationToken = default);
-    Task<(TaskDto? Task, string? Error)> UpdateStatusAsync(int id, string status, CancellationToken cancellationToken = default);
+    Task<(TaskDto? Task, string? Error)> UpdateStatusAsync(int id, string status, string? actorName = null, CancellationToken cancellationToken = default);
 }
 
 public class TaskService(ITaskRepository taskRepository, IActivityLogService activityLogService) : ITaskService
 {
-    public async Task<List<TaskDto>> GetAllAsync(TaskQueryDto query, CancellationToken cancellationToken = default)
+    public async Task<List<TaskDto>> GetAllAsync(TaskQueryDto query, int? ownerIdFilter = null, CancellationToken cancellationToken = default)
     {
-        var listQuery = ParseQuery(query);
+        var listQuery = ParseQuery(query, ownerIdFilter);
         var tasks = await taskRepository.GetAllAsync(listQuery, cancellationToken);
         return tasks.Select(MapToDto).ToList();
     }
 
-    public async Task<PagedResultDto<TaskDto>> GetPagedAsync(TaskQueryDto query, CancellationToken cancellationToken = default)
+    public async Task<PagedResultDto<TaskDto>> GetPagedAsync(TaskQueryDto query, int? ownerIdFilter = null, CancellationToken cancellationToken = default)
     {
-        var listQuery = ParseQuery(query);
+        var listQuery = ParseQuery(query, ownerIdFilter);
         listQuery.Page = Math.Max(1, query.Page ?? 1);
         listQuery.PageSize = Math.Clamp(
             query.PageSize ?? TaskRepository.DefaultPageSize,
@@ -52,11 +52,12 @@ public class TaskService(ITaskRepository taskRepository, IActivityLogService act
         };
     }
 
-    private static TaskListQuery ParseQuery(TaskQueryDto query)
+    private static TaskListQuery ParseQuery(TaskQueryDto query, int? ownerIdFilter = null)
     {
         var listQuery = new TaskListQuery
         {
-            Search = query.Search
+            Search = query.Search,
+            OwnerId = ownerIdFilter
         };
 
         if (!string.IsNullOrWhiteSpace(query.Status) &&
@@ -157,7 +158,7 @@ public class TaskService(ITaskRepository taskRepository, IActivityLogService act
         return (updated is null ? null : MapToDto(updated), null);
     }
 
-    public async Task<(TaskDto? Task, string? Error)> UpdateStatusAsync(int id, string status, CancellationToken cancellationToken = default)
+    public async Task<(TaskDto? Task, string? Error)> UpdateStatusAsync(int id, string status, string? actorName = null, CancellationToken cancellationToken = default)
     {
         var existing = await taskRepository.GetByIdAsync(id, cancellationToken);
         if (existing is null)
@@ -182,7 +183,7 @@ public class TaskService(ITaskRepository taskRepository, IActivityLogService act
             "StatusChanged",
             previousValue: previousStatus,
             newValue: newStatus,
-            user: existing.Owner?.Name ?? "System",
+            user: actorName ?? existing.Owner?.Name ?? "System",
             cancellationToken);
 
         var updated = await taskRepository.GetByIdAsync(id, cancellationToken);

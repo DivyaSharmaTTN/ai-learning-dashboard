@@ -165,4 +165,44 @@
 
 ---
 
+## FL-010 — JWT Authentication and RBAC (Stretch)
+
+| Field | Value |
+|-------|-------|
+| **Feature name** | JWT login and role-based authorization |
+| **Requirement** | Stretch: JWT Bearer + BCrypt; Admin/User roles; protected APIs and frontend |
+| **Branch** | `feature/stretch-auth-rbac` |
+| **Files created** | `AuthController`, `AuthService`, `AuthDtos`, `AuthRoles`, `JwtSettings`, `ClaimsPrincipalExtensions`, migration `AddAuthPasswordHashAndUsers`, frontend auth modules, `ai-prompts/08-auth-rbac.md` |
+| **Files modified** | Controllers, `User`, `AppDbContext`, `Program.cs`, task services/repos, frontend App/Layout/pages, tests, docs |
+| **Database changes** | `Users.PasswordHash`; seeded `admin@example.com` (Admin), `user@example.com` (User) |
+| **API changes** | `POST /api/auth/login`; all endpoints JWT-protected; role-based access |
+| **Frontend changes** | Login page, `AuthContext`, protected/admin routes, role-based UI |
+| **Testing added** | 8 auth xUnit tests; updated 14 task tests; `LoginPage.test.tsx`; backend 22/22, frontend 11/11 |
+| **Cursor prompt summary** | Create branch and implement full JWT auth + RBAC stretch |
+| **What AI suggested** | Nullable PasswordHash; Testing env for integration tests; sessionStorage for token |
+| **What was accepted** | Full implementation per requirements |
+| **Suggested commit message** | `feat(auth): add JWT login and role-based access control` |
+| **Status** | Complete |
+| **Date** | 2026-07-09 |
+
+---
+
+## FL-011 — Auth UI Review: User Permissions + Login Redesign
+
+| Field | Value |
+|-------|-------|
+| **Feature name** | Auth RBAC UX review and login polish |
+| **Requirement** | Verify User cannot create tasks (by design); fix misleading empty state; modern login UI |
+| **Branch** | `feature/stretch-auth-rbac` |
+| **Files modified** | `LoginPage.tsx`, `LoginPage.test.tsx`, `DashboardPage.tsx`, `DashboardPage.test.tsx`, `index.css`, docs |
+| **Database changes** | None |
+| **API changes** | None (Admin-only create already enforced) |
+| **Frontend changes** | Role-specific empty states; redesigned login with validation, password toggle, branding |
+| **Testing added** | Login validation/toggle tests; User empty-state test; 14/14 Vitest |
+| **Suggested commit message** | `fix(auth-ui): clarify User permissions and redesign login page` |
+| **Status** | Complete |
+| **Date** | 2026-07-09 |
+
+---
+
 *Append new features below.*

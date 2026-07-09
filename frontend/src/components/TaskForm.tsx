@@ -22,6 +22,7 @@ interface TaskFormProps {
   users: User[];
   initialValues?: Partial<TaskFormValues>;
   submitLabel: string;
+  readOnly?: boolean;
   onSubmit: (values: CreateTaskPayload) => Promise<void>;
   onCancel?: () => void;
 }
@@ -48,6 +49,7 @@ export function TaskForm({
   users,
   initialValues,
   submitLabel,
+  readOnly = false,
   onSubmit,
   onCancel,
 }: TaskFormProps) {
@@ -104,12 +106,13 @@ export function TaskForm({
   };
 
   return (
-    <form className="task-form" onSubmit={handleSubmit} noValidate>
+    <form className="task-form" onSubmit={readOnly ? (e) => e.preventDefault() : handleSubmit} noValidate>
       <div className="form-field">
         <label htmlFor="title">Title *</label>
         <input
           id="title"
           value={values.title}
+          disabled={readOnly}
           onChange={(e) => setValues({ ...values, title: e.target.value })}
         />
         {errors.title && <span className="field-error">{errors.title}</span>}
@@ -121,6 +124,7 @@ export function TaskForm({
           id="description"
           rows={4}
           value={values.description}
+          disabled={readOnly}
           onChange={(e) => setValues({ ...values, description: e.target.value })}
         />
       </div>
@@ -131,6 +135,7 @@ export function TaskForm({
           <select
             id="category"
             value={values.category}
+            disabled={readOnly}
             onChange={(e) =>
               setValues({ ...values, category: e.target.value as TaskCategory })
             }
@@ -149,6 +154,7 @@ export function TaskForm({
           <select
             id="priority"
             value={values.priority}
+            disabled={readOnly}
             onChange={(e) =>
               setValues({ ...values, priority: e.target.value as TaskPriority })
             }
@@ -166,6 +172,7 @@ export function TaskForm({
           <select
             id="status"
             value={values.status}
+            disabled={readOnly}
             onChange={(e) =>
               setValues({ ...values, status: e.target.value as TaskStatus })
             }
@@ -185,6 +192,7 @@ export function TaskForm({
           <select
             id="ownerId"
             value={values.ownerId}
+            disabled={readOnly}
             onChange={(e) =>
               setValues({ ...values, ownerId: Number(e.target.value) })
             }
@@ -205,6 +213,7 @@ export function TaskForm({
             id="dueDate"
             type="date"
             value={values.dueDate}
+            disabled={readOnly}
             onChange={(e) => setValues({ ...values, dueDate: e.target.value })}
           />
           {errors.dueDate && <span className="field-error">{errors.dueDate}</span>}
@@ -216,12 +225,14 @@ export function TaskForm({
       <div className="form-actions">
         {onCancel && (
           <button type="button" className="btn btn-secondary" onClick={onCancel}>
-            Cancel
+            {readOnly ? 'Back' : 'Cancel'}
           </button>
         )}
-        <button type="submit" className="btn btn-primary" disabled={submitting}>
-          {submitting ? 'Saving...' : submitLabel}
-        </button>
+        {!readOnly && (
+          <button type="submit" className="btn btn-primary" disabled={submitting}>
+            {submitting ? 'Saving...' : submitLabel}
+          </button>
+        )}
       </div>
     </form>
   );

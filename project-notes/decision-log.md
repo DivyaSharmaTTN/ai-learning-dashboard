@@ -96,3 +96,29 @@
 ---
 
 *Append new decisions below.*
+
+---
+
+## DL-008 — JWT Auth with Role on User Entity
+
+| Field | Value |
+|-------|-------|
+| **Decision** | Add `PasswordHash` to existing `User` table; use `Role` column for ASP.NET roles (`Admin`, `User`) |
+| **Why chosen** | Minimal schema change; preserves legacy seed users and task owner FKs |
+| **Alternative considered** | Separate `AuthUser` table or ASP.NET Identity |
+| **Trade-off** | `Role` mixes job titles (Developer) and auth roles (Admin) |
+| **Impact** | `[Authorize(Roles = "Admin")]` on dashboard/users/create endpoints |
+| **Date** | 2026-07-09 |
+
+---
+
+## DL-009 — User Role Cannot Create Tasks (By Design)
+
+| Field | Value |
+|-------|-------|
+| **Decision** | Task creation (`POST /api/tasks`) and full edit remain Admin-only; User sees role-specific empty state |
+| **Why chosen** | Original stretch requirement: "User: View assigned tasks and update only their task status" |
+| **Alternative considered** | Allow User to create tasks |
+| **Trade-off** | Users depend on Admin for new assignments |
+| **Impact** | Frontend hides create nav/actions for User; empty state says "Contact an admin" |
+| **Date** | 2026-07-09 |

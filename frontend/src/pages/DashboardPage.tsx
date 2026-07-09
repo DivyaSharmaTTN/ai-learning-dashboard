@@ -21,6 +21,7 @@ import { TaskList } from '../components/TaskList';
 import { TaskPagination } from '../components/TaskPagination';
 import { DashboardSkeleton } from '../components/ui/Skeleton';
 import { useToast } from '../context/ToastContext';
+import { useAuth } from '../context/AuthContext';
 import type {
   DashboardSummary,
   Task,
@@ -32,6 +33,7 @@ import type {
 
 export function DashboardPage() {
   const { showSuccess } = useToast();
+  const { user, isAdmin } = useAuth();
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
   const [panelTasks, setPanelTasks] = useState<Task[]>([]);
   const [listTasks, setListTasks] = useState<Task[]>([]);
@@ -68,19 +70,24 @@ export function DashboardPage() {
     setInitialLoading(true);
     setError(null);
     try {
-      const [summaryData, allTasks] = await Promise.all([
-        dashboardApi.getSummary(),
-        tasksApi.getAll({}),
-      ]);
-      setSummary(summaryData);
-      setPanelTasks(allTasks);
+      if (isAdmin) {
+        const [summaryData, allTasks] = await Promise.all([
+          dashboardApi.getSummary(),
+          tasksApi.getAll({}),
+        ]);
+        setSummary(summaryData);
+        setPanelTasks(allTasks);
+      } else {
+        setSummary(null);
+        setPanelTasks([]);
+      }
       setDashboardReady(true);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load dashboard');
     } finally {
       setInitialLoading(false);
     }
-  }, []);
+  }, [isAdmin]);
 
   const loadTaskList = useCallback(async (filters: TaskFilters) => {
     setListLoading(true);
@@ -142,13 +149,17 @@ export function DashboardPage() {
   }, []);
 
   const handleRefresh = async () => {
-    await loadDashboard();
+    if (isAdmin) {
+      await loadDashboard();
+    }
     await loadTaskList(listFilters);
     showSuccess('Dashboard updated');
   };
 
   const handleStatusUpdated = async () => {
-    await loadDashboard();
+    if (isAdmin) {
+      await loadDashboard();
+    }
     await loadTaskList(listFilters);
   };
 
@@ -164,52 +175,64 @@ export function DashboardPage() {
     <div className="dashboard-page page-enter">
       <header className="welcome-header">
         <div>
-          <h1>Welcome back, Alex</h1>
-          <p>Track learning goals and project tasks with AI-powered insights</p>
+          <h1>Welcome back, {user?.name?.split(' ')[0] ?? 'there'}</h1>
+          <p>
+            {isAdmin
+              ? 'Track learning goals and project tasks with AI-powered insights'
+              : 'View your assigned tasks and update their status'}
+          </p>
         </div>
         <div className="header-pills">
-          <span className="pill pill--active">
-            <Sparkles size={14} />
-            AI Active
-          </span>
-          <Link to="/tasks/new" className="pill pill--ghost">
-            <Plus size={14} />
-            New Task
-          </Link>
+          {isAdmin && (
+            <span className="pill pill--active">
+              <Sparkles size={14} />
+              AI Active
+            </span>
+          )}
+          {isAdmin && (
+            <Link to="/tasks/new" className="pill pill--ghost">
+              <Plus size={14} />
+              New Task
+            </Link>
+          )}
           <button type="button" className="pill pill--ghost" onClick={() => void handleRefresh()}>
             <RefreshCw size={14} />
             Refresh
           </button>
-          <button type="button" className="pill pill--ghost" disabled title="Coming soon">
-            <Upload size={14} />
-            Export
-          </button>
+          {isAdmin && (
+            <button type="button" className="pill pill--ghost" disabled title="Coming soon">
+              <Upload size={14} />
+              Export
+            </button>
+          )}
         </div>
       </header>
 
-      {summary && <SummaryCards summary={summary} />}
+      {isAdmin && summary && <SummaryCards summary={summary} />}
 
-      <div className="dashboard-grid">
-        <section className="chart-section glass-card">
-          <h2 className="section-title">Task Status</h2>
-          {summary && <TaskStatusChart summary={summary} />}
-        </section>
-        <section className="chart-section glass-card">
-          <h2 className="section-title">Weekly Progress</h2>
-          <WeeklyProgressChart tasks={panelTasks} />
-        </section>
-        {summary && (
+      {isAdmin && (
+        <div className="dashboard-grid">
+          <section className="chart-section glass-card">
+            <h2 className="section-title">Task Status</h2>
+            {summary && <TaskStatusChart summary={summary} />}
+          </section>
+          <section className="chart-section glass-card">
+            <h2 className="section-title">Weekly Progress</h2>
+            <WeeklyProgressChart tasks={panelTasks} />
+          </section>
+          {summary && (
+            <div className="glass-card">
+              <AiInsights summary={summary} tasks={panelTasks} />
+            </div>
+          )}
           <div className="glass-card">
-            <AiInsights summary={summary} tasks={panelTasks} />
+            <RecentActivity tasks={panelTasks} />
           </div>
-        )}
-        <div className="glass-card">
-          <RecentActivity tasks={panelTasks} />
+          <div className="glass-card">
+            <UpcomingDeadlines tasks={panelTasks} />
+          </div>
         </div>
-        <div className="glass-card">
-          <UpcomingDeadlines tasks={panelTasks} />
-        </div>
-      </div>
+      )}
 
       <section className="tasks-section glass-card" aria-busy={listLoading}>
         <h2 className="section-title">Tasks</h2>
@@ -239,21 +262,24 @@ export function DashboardPage() {
           </div>
         ) : listTasks.length === 0 ? (
           <EmptyState
+            title={hasActiveFilters ? 'No tasks found' : isAdmin ? 'No tasks yet' : 'No assigned tasks'}
             message={
               hasActiveFilters
                 ? 'No tasks match your filters. Try adjusting search or filters.'
-                : undefined
+                : isAdmin
+                  ? 'Create a new task to get started or adjust your filters.'
+                  : 'You have no tasks assigned yet. Contact an admin to assign tasks to you.'
             }
             action={
               hasActiveFilters ? (
                 <button type="button" className="btn btn-secondary" onClick={handleClearFilters}>
                   Clear filters
                 </button>
-              ) : (
+              ) : isAdmin ? (
                 <Link to="/tasks/new" className="btn btn-primary">
                   Create your first task
                 </Link>
-              )
+              ) : undefined
             }
           />
         ) : (

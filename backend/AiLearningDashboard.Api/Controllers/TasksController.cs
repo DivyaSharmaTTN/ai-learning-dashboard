@@ -1,15 +1,18 @@
-// @branch feature/stretch-filters-pagination
-// @history 2026-07-09 — GET /api/tasks/{id}/activity endpoint
-// @history 2026-07-09 — Priority/category filters and paginated GET /api/tasks
+// @branch feature/stretch-auth-rbac
+// @history 2026-07-09 — JWT auth and role-based task access control
 
 using AiLearningDashboard.Api.DTOs;
+using AiLearningDashboard.Api.Entities;
+using AiLearningDashboard.Api.Extensions;
 using AiLearningDashboard.Api.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AiLearningDashboard.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class TasksController(ITaskService taskService, IActivityLogService activityLogService) : ControllerBase
 {
     [HttpGet]
@@ -17,13 +20,15 @@ public class TasksController(ITaskService taskService, IActivityLogService activ
         [FromQuery] TaskQueryDto query,
         CancellationToken cancellationToken)
     {
+        var ownerFilter = User.IsAdmin() ? null : User.GetUserId();
+
         if (query.Page.HasValue)
         {
-            var paged = await taskService.GetPagedAsync(query, cancellationToken);
+            var paged = await taskService.GetPagedAsync(query, ownerFilter, cancellationToken);
             return Ok(paged);
         }
 
-        var tasks = await taskService.GetAllAsync(query, cancellationToken);
+        var tasks = await taskService.GetAllAsync(query, ownerFilter, cancellationToken);
         return Ok(tasks);
     }
 
@@ -34,6 +39,11 @@ public class TasksController(ITaskService taskService, IActivityLogService activ
         if (task is null)
         {
             return NotFound(new { message = "Task not found." });
+        }
+
+        if (!CanAccessTask(task.OwnerId))
+        {
+            return Forbid();
         }
 
         return Ok(task);
@@ -50,11 +60,17 @@ public class TasksController(ITaskService taskService, IActivityLogService activ
             return NotFound(new { message = "Task not found." });
         }
 
+        if (!CanAccessTask(task.OwnerId))
+        {
+            return Forbid();
+        }
+
         var activity = await activityLogService.GetByTaskIdAsync(id, cancellationToken);
         return Ok(activity);
     }
 
     [HttpPost]
+    [Authorize(Roles = AuthRoles.Admin)]
     public async Task<ActionResult<TaskDto>> Create(
         [FromBody] CreateTaskDto dto,
         CancellationToken cancellationToken)
@@ -69,6 +85,7 @@ public class TasksController(ITaskService taskService, IActivityLogService activ
     }
 
     [HttpPut("{id:int}")]
+    [Authorize(Roles = AuthRoles.Admin)]
     public async Task<ActionResult<TaskDto>> Update(
         int id,
         [FromBody] UpdateTaskDto dto,
@@ -94,7 +111,19 @@ public class TasksController(ITaskService taskService, IActivityLogService activ
         [FromBody] UpdateTaskStatusDto dto,
         CancellationToken cancellationToken)
     {
-        var (task, error) = await taskService.UpdateStatusAsync(id, dto.Status, cancellationToken);
+        var existing = await taskService.GetByIdAsync(id, cancellationToken);
+        if (existing is null)
+        {
+            return NotFound(new { message = "Task not found." });
+        }
+
+        if (!CanUpdateTaskStatus(existing.OwnerId))
+        {
+            return Forbid();
+        }
+
+        var actorName = User.Identity?.Name;
+        var (task, error) = await taskService.UpdateStatusAsync(id, dto.Status, actorName, cancellationToken);
         if (error == "Task not found.")
         {
             return NotFound(new { message = error });
@@ -106,5 +135,25 @@ public class TasksController(ITaskService taskService, IActivityLogService activ
         }
 
         return Ok(task);
+    }
+
+    private bool CanAccessTask(int ownerId)
+    {
+        if (User.IsAdmin())
+        {
+            return true;
+        }
+
+        return User.GetUserId() == ownerId;
+    }
+
+    private bool CanUpdateTaskStatus(int ownerId)
+    {
+        if (User.IsAdmin())
+        {
+            return true;
+        }
+
+        return User.IsInRole(AuthRoles.User) && User.GetUserId() == ownerId;
     }
 }

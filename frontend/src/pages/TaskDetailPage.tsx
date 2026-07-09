@@ -13,12 +13,14 @@ import { ErrorState } from '../components/ErrorState';
 import { LoadingState } from '../components/LoadingState';
 import { TaskForm, taskToFormValues } from '../components/TaskForm';
 import { useToast } from '../context/ToastContext';
+import { useAuth } from '../context/AuthContext';
 import type { ActivityLog, Task, User } from '../types';
 
 export function TaskDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { showSuccess } = useToast();
+  const { isAdmin } = useAuth();
   const [task, setTask] = useState<Task | null>(null);
   const [users, setUsers] = useState<User[]>([]);
   const [activityLogs, setActivityLogs] = useState<ActivityLog[]>([]);
@@ -35,7 +37,11 @@ export function TaskDetailPage() {
 
     setLoading(true);
     setError(null);
-    Promise.all([tasksApi.getById(taskId), usersApi.getAll(), activityApi.getByTaskId(taskId)])
+    Promise.all([
+      tasksApi.getById(taskId),
+      isAdmin ? usersApi.getAll() : Promise.resolve([] as User[]),
+      activityApi.getByTaskId(taskId),
+    ])
       .then(([taskData, usersData, logs]) => {
         setTask(taskData);
         setUsers(usersData);
@@ -45,7 +51,7 @@ export function TaskDetailPage() {
         setError(err instanceof Error ? err.message : 'Failed to load task'),
       )
       .finally(() => setLoading(false));
-  }, [id]);
+  }, [id, isAdmin]);
 
   useEffect(() => {
     void loadTask();
@@ -74,6 +80,7 @@ export function TaskDetailPage() {
         users={users}
         initialValues={taskToFormValues(task)}
         submitLabel="Save Changes"
+        readOnly={!isAdmin}
         onCancel={() => navigate('/')}
         onSubmit={async (payload) => {
           await tasksApi.update(task.id, payload);

@@ -97,6 +97,16 @@ Git workflow established. UI overhaul on `feature/modern-ai-dashboard-ui`.
 - [x] Sync `cursor-rules-or-instructions.md`, `project-context.md`, `spec.md`
 - [x] Append-only history policy documented across workflow files
 
+## Stretch: JWT Auth & RBAC (2026-07-09)
+
+- [x] `Microsoft.AspNetCore.Authentication.JwtBearer` + `BCrypt.Net-Next`
+- [x] `POST /api/auth/login` with seeded Admin/User accounts
+- [x] `[Authorize]` on all APIs; role-based task access
+- [x] Frontend login, logout, protected routes, role UI
+- [x] Auth integration tests (22 backend, 11 frontend)
+- [x] `ai-prompts/08-auth-rbac.md` and project notes updated
+- [ ] Merge `feature/stretch-auth-rbac` → `dev` (not merged per user request)
+
 ---
 
 ## Session 1 Notes

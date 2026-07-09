@@ -75,3 +75,5 @@ All files under `/docs`, `/project-notes`, `/ai-prompts`, `/tool-specific/cursor
 | 2026-07-03 | Initial spec |
 | 2026-07-09 | ActivityLog entity, activity API, ActivityHistory; git-workflow doc rules |
 | 2026-07-09 | Extended task filters (priority, category) and paginated GET /api/tasks |
+| 2026-07-09 | JWT auth + RBAC: login API, Admin/User roles, protected routes |
+| 2026-07-09 | Auth UI review: Admin-only task creation documented; login page redesign |
