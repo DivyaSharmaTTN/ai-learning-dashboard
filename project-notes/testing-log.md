@@ -9,9 +9,11 @@
 | GetTasks_AfterCreate_ReturnsTaskInList | `TasksApiTests.cs` | ✅ Pass |
 | UpdateTaskStatus_ToInProgress_ReturnsUpdatedStatus | `TasksApiTests.cs` | ✅ Pass |
 | DashboardSummary_UpdatesAfterCreate | `TasksApiTests.cs` | ✅ Pass |
+| CreateTask_WithInvalidOwner_ReturnsBadRequest | `TasksApiTests.cs` | ✅ Pass |
+| GetTasks_WithStatusFilter_ReturnsMatchingTasks | `TasksApiTests.cs` | ✅ Pass |
 | DashboardSummary_OverdueExcludesCompleted | `TasksApiTests.cs` | ✅ Pass |
 
-**Run**: `cd backend && dotnet test` — 6/6 passed (2026-07-03)
+**Run**: `cd backend && dotnet test` — 8/8 passed
 
 ## Frontend Tests (Vitest + RTL)
 
@@ -23,16 +25,20 @@
 | DashboardPage renders tasks | `DashboardPage.test.tsx` | ✅ Pass |
 | DashboardPage empty state | `DashboardPage.test.tsx` | ✅ Pass |
 | Status quick action PATCH | `DashboardPage.test.tsx` | ✅ Pass |
+| Debounced search (list-only) | `DashboardPage.test.tsx` | ✅ Pass |
+| Search button immediate apply | `DashboardPage.test.tsx` | ✅ Pass |
 
-**Run**: `cd frontend && npm test` — 6/6 passed (2026-07-03)
+**Run**: `cd frontend && npm test` — 8/8 passed
 
 ## Edge Cases Covered
 
 | Case | Covered By |
 |------|------------|
 | Backend validation (empty title) | BT-02 |
+| Backend validation (invalid owner) | BT invalid owner test |
 | Dashboard count increment | BT-07 |
-| Overdue excludes completed | BT-08 |
+| Overdue excludes completed | BT-08 (before/after assertion) |
+| Status filter | BT status filter test |
 | Frontend empty state | FT empty test |
 | Frontend form validation | TaskForm test |
 
@@ -43,4 +49,4 @@
 
 ---
 
-*Last updated: 2026-07-03*
+*Last updated: 2026-07-09*

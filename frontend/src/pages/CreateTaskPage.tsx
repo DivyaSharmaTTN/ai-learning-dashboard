@@ -2,7 +2,7 @@
  * @branch feature/modern-ai-dashboard-ui
  * @history 2026-07-03 — Styled create task page
  */
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { tasksApi } from '../api/tasks';
 import { usersApi } from '../api/users';
@@ -19,7 +19,9 @@ export function CreateTaskPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
+  const loadUsers = useCallback(() => {
+    setLoading(true);
+    setError(null);
     usersApi
       .getAll()
       .then(setUsers)
@@ -29,8 +31,12 @@ export function CreateTaskPage() {
       .finally(() => setLoading(false));
   }, []);
 
+  useEffect(() => {
+    void loadUsers();
+  }, [loadUsers]);
+
   if (loading) return <LoadingState message="Loading form..." />;
-  if (error) return <ErrorState message={error} />;
+  if (error) return <ErrorState message={error} onRetry={() => void loadUsers()} />;
 
   return (
     <div className="page-container page-enter">

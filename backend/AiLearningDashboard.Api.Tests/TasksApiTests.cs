@@ -150,8 +150,49 @@ public class TasksApiTests : IClassFixture<CustomWebApplicationFactory>
     }
 
     [Fact]
+    public async Task CreateTask_WithInvalidOwner_ReturnsBadRequest()
+    {
+        var dto = new CreateTaskDto
+        {
+            Title = "Invalid Owner Task",
+            Category = "Learning",
+            Priority = "Medium",
+            Status = "NotStarted",
+            OwnerId = 999,
+            DueDate = DateTime.UtcNow.AddDays(3)
+        };
+
+        var response = await _client.PostAsJsonAsync("/api/tasks", dto);
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task GetTasks_WithStatusFilter_ReturnsMatchingTasks()
+    {
+        await _client.PostAsJsonAsync("/api/tasks", new CreateTaskDto
+        {
+            Title = "Filter In Progress Task",
+            Category = "Project",
+            Priority = "Low",
+            Status = "InProgress",
+            OwnerId = 1,
+            DueDate = DateTime.UtcNow.AddDays(5)
+        });
+
+        var tasks = await _client.GetFromJsonAsync<List<TaskDto>>("/api/tasks?status=InProgress");
+
+        Assert.NotNull(tasks);
+        Assert.Contains(tasks, t => t.Title == "Filter In Progress Task");
+        Assert.All(tasks, t => Assert.Equal("InProgress", t.Status));
+    }
+
+    [Fact]
     public async Task DashboardSummary_OverdueExcludesCompleted()
     {
+        var before = await _client.GetFromJsonAsync<DashboardSummaryDto>("/api/dashboard/summary");
+        Assert.NotNull(before);
+
         await _client.PostAsJsonAsync("/api/tasks", new CreateTaskDto
         {
             Title = "Overdue Completed",
@@ -161,6 +202,10 @@ public class TasksApiTests : IClassFixture<CustomWebApplicationFactory>
             OwnerId = 1,
             DueDate = DateTime.UtcNow.AddDays(-5)
         });
+
+        var afterCompleted = await _client.GetFromJsonAsync<DashboardSummaryDto>("/api/dashboard/summary");
+        Assert.NotNull(afterCompleted);
+        Assert.Equal(before.OverdueItems, afterCompleted.OverdueItems);
 
         await _client.PostAsJsonAsync("/api/tasks", new CreateTaskDto
         {
@@ -172,8 +217,8 @@ public class TasksApiTests : IClassFixture<CustomWebApplicationFactory>
             DueDate = DateTime.UtcNow.AddDays(-3)
         });
 
-        var summary = await _client.GetFromJsonAsync<DashboardSummaryDto>("/api/dashboard/summary");
-        Assert.NotNull(summary);
-        Assert.True(summary.OverdueItems >= 1);
+        var afterActive = await _client.GetFromJsonAsync<DashboardSummaryDto>("/api/dashboard/summary");
+        Assert.NotNull(afterActive);
+        Assert.Equal(afterCompleted.OverdueItems + 1, afterActive.OverdueItems);
     }
 }

@@ -2,7 +2,7 @@
  * @branch feature/modern-ai-dashboard-ui
  * @history 2026-07-03 — Styled task detail page
  */
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { tasksApi } from '../api/tasks';
 import { usersApi } from '../api/users';
@@ -21,7 +21,7 @@ export function TaskDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
+  const loadTask = useCallback(() => {
     const taskId = Number(id);
     if (Number.isNaN(taskId)) {
       setError('Invalid task id');
@@ -29,6 +29,8 @@ export function TaskDetailPage() {
       return;
     }
 
+    setLoading(true);
+    setError(null);
     Promise.all([tasksApi.getById(taskId), usersApi.getAll()])
       .then(([taskData, usersData]) => {
         setTask(taskData);
@@ -40,8 +42,19 @@ export function TaskDetailPage() {
       .finally(() => setLoading(false));
   }, [id]);
 
+  useEffect(() => {
+    void loadTask();
+  }, [loadTask]);
+
   if (loading) return <LoadingState message="Loading task..." />;
-  if (error || !task) return <ErrorState message={error ?? 'Task not found'} />;
+  if (error || !task) {
+    return (
+      <ErrorState
+        message={error ?? 'Task not found'}
+        onRetry={error ? () => void loadTask() : undefined}
+      />
+    );
+  }
 
   return (
     <div className="page-container page-enter">
