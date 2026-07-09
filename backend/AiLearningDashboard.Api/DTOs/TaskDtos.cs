@@ -1,5 +1,6 @@
-// @branch feature/stretch-activity-log
+// @branch feature/stretch-filters-pagination
 // @history 2026-07-09 — ActivityLogDto for audit history API responses
+// @history 2026-07-09 — TaskQueryDto filters + PagedResultDto for paginated list
 
 using System.Text.Json.Serialization;
 using AiLearningDashboard.Api.Entities;
@@ -71,6 +72,19 @@ public class TaskQueryDto
 {
     public string? Search { get; set; }
     public string? Status { get; set; }
+    public string? Priority { get; set; }
+    public string? Category { get; set; }
+    public int? Page { get; set; }
+    public int? PageSize { get; set; }
+}
+
+public class PagedResultDto<T>
+{
+    public List<T> Items { get; set; } = [];
+    public int TotalCount { get; set; }
+    public int Page { get; set; }
+    public int PageSize { get; set; }
+    public int TotalPages { get; set; }
 }
 
 public class ActivityLogDto

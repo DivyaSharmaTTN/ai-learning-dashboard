@@ -1,5 +1,6 @@
-// @branch feature/stretch-activity-log
+// @branch feature/stretch-filters-pagination
 // @history 2026-07-09 — Activity log integration tests (create, status change, 404)
+// @history 2026-07-09 — Pagination and priority/category filter tests
 
 using System.Net;
 using System.Net.Http.Json;
@@ -279,5 +280,75 @@ public class TasksApiTests : IClassFixture<CustomWebApplicationFactory>
     {
         var response = await _client.GetAsync("/api/tasks/99999/activity");
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task GetTasks_WithPriorityFilter_ReturnsMatchingTasks()
+    {
+        await _client.PostAsJsonAsync("/api/tasks", new CreateTaskDto
+        {
+            Title = "High Priority Filter Task",
+            Category = "Project",
+            Priority = "High",
+            Status = "NotStarted",
+            OwnerId = 1,
+            DueDate = DateTime.UtcNow.AddDays(5)
+        });
+
+        var tasks = await _client.GetFromJsonAsync<List<TaskDto>>("/api/tasks?priority=High");
+
+        Assert.NotNull(tasks);
+        Assert.Contains(tasks, t => t.Title == "High Priority Filter Task");
+        Assert.All(tasks, t => Assert.Equal("High", t.Priority));
+    }
+
+    [Fact]
+    public async Task GetTasks_WithCategoryFilter_ReturnsMatchingTasks()
+    {
+        await _client.PostAsJsonAsync("/api/tasks", new CreateTaskDto
+        {
+            Title = "Certification Filter Task",
+            Category = "Certification",
+            Priority = "Medium",
+            Status = "NotStarted",
+            OwnerId = 1,
+            DueDate = DateTime.UtcNow.AddDays(5)
+        });
+
+        var tasks = await _client.GetFromJsonAsync<List<TaskDto>>("/api/tasks?category=Certification");
+
+        Assert.NotNull(tasks);
+        Assert.Contains(tasks, t => t.Title == "Certification Filter Task");
+        Assert.All(tasks, t => Assert.Equal("Certification", t.Category));
+    }
+
+    [Fact]
+    public async Task GetTasks_WithPagination_ReturnsPagedResult()
+    {
+        for (var i = 0; i < 12; i++)
+        {
+            await _client.PostAsJsonAsync("/api/tasks", new CreateTaskDto
+            {
+                Title = $"Pagination Task {i + 1}",
+                Category = "Learning",
+                Priority = "Low",
+                Status = "NotStarted",
+                OwnerId = 1,
+                DueDate = DateTime.UtcNow.AddDays(i + 1)
+            });
+        }
+
+        var page1 = await _client.GetFromJsonAsync<PagedResultDto<TaskDto>>("/api/tasks?page=1&pageSize=10");
+        Assert.NotNull(page1);
+        Assert.Equal(10, page1.Items.Count);
+        Assert.True(page1.TotalCount >= 12);
+        Assert.Equal(1, page1.Page);
+        Assert.Equal(10, page1.PageSize);
+        Assert.True(page1.TotalPages >= 2);
+
+        var page2 = await _client.GetFromJsonAsync<PagedResultDto<TaskDto>>("/api/tasks?page=2&pageSize=10");
+        Assert.NotNull(page2);
+        Assert.True(page2.Items.Count >= 2);
+        Assert.Equal(2, page2.Page);
     }
 }

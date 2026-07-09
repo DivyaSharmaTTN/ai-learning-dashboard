@@ -41,8 +41,14 @@ List tasks with optional filters.
 |-------|------|-------------|
 | `search` | string | Keyword match in title/description (optional) |
 | `status` | string | Filter by status: `NotStarted`, `InProgress`, `Completed` (optional) |
+| `priority` | string | Filter by priority: `Low`, `Medium`, `High` (optional) |
+| `category` | string | Filter by category: `Learning`, `Project`, `Certification`, `Other` (optional) |
+| `page` | int | Page number (1-based). When provided, response is paginated (optional) |
+| `pageSize` | int | Items per page (default 10, max 100). Used with `page` (optional) |
 
-**Response 200**
+**Response 200 (no `page` param)**
+
+Returns a flat array of tasks (backward compatible for dashboard panels):
 
 ```json
 [
@@ -61,6 +67,20 @@ List tasks with optional filters.
     "isOverdue": false
   }
 ]
+```
+
+**Response 200 (with `page` param)**
+
+Returns a paginated envelope:
+
+```json
+{
+  "items": [ /* TaskDto[] */ ],
+  "totalCount": 42,
+  "page": 1,
+  "pageSize": 10,
+  "totalPages": 5
+}
 ```
 
 ### GET `/api/tasks/{id}`

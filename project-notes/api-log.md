@@ -16,10 +16,11 @@
 
 ## GET `/api/tasks`
 
-- **Purpose**: List tasks with optional search/status filter
-- **Query**: `search` (string), `status` (NotStarted|InProgress|Completed)
-- **Response 200**: Array of `TaskDto` with `isOverdue` computed
-- **Used by**: `DashboardPage`, `TaskList`
+- **Purpose**: List tasks with optional search, status, priority, and category filters; optional pagination
+- **Query**: `search`, `status`, `priority`, `category`, `page`, `pageSize`
+- **Response 200 (no page)**: Array of `TaskDto` with `isOverdue` computed
+- **Response 200 (with page)**: `{ items, totalCount, page, pageSize, totalPages }`
+- **Used by**: `DashboardPage` (panels use flat list; task list uses paginated response), `TaskList`
 
 ---
 
@@ -81,4 +82,4 @@
 
 ---
 
-*Last updated: 2026-07-09*
+*Last updated: 2026-07-09 — feature/stretch-filters-pagination*

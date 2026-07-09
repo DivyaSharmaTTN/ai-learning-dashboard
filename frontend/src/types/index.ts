@@ -1,6 +1,7 @@
 /**
- * @branch feature/stretch-activity-log
+ * @branch feature/stretch-filters-pagination
  * @history 2026-07-09 — ActivityLog type for audit history
+ * @history 2026-07-09 — Extended TaskFilters and PagedTasks for pagination
  * @history 2026-07-03 — Core task and dashboard types
  */
 export type TaskPriority = 'Low' | 'Medium' | 'High';
@@ -52,6 +53,18 @@ export type UpdateTaskPayload = CreateTaskPayload;
 export interface TaskFilters {
   search?: string;
   status?: TaskStatus | '';
+  priority?: TaskPriority | '';
+  category?: TaskCategory | '';
+  page?: number;
+  pageSize?: number;
+}
+
+export interface PagedTasks {
+  items: Task[];
+  totalCount: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
 }
 
 export interface ActivityLog {

@@ -20,6 +20,7 @@
 - [x] `feature/fix-search-debounce` — Debounced task search, remove duplicate topbar search
 - [x] `feature/core-acceptance-review` — Core acceptance gap fixes (error retry, stronger tests)
 - [x] `feature/stretch-activity-log` — Activity log entity, API, task detail UI
+- [x] `feature/stretch-filters-pagination` — Priority/category filters and paginated task list
 - [x] Adopt `.cursor/rules/git-workflow.mdc` — append-only doc history on every change
 - [ ] Merge feature branches → `dev`
 - [ ] Never commit directly to `main`
@@ -50,7 +51,7 @@
 ## Current Branch
 
 Use `feature/<task-name>` from `dev` per `.cursor/rules/git-workflow.mdc`.  
-Recent: `feature/stretch-activity-log`, `feature/core-acceptance-review`.
+Recent: `feature/stretch-filters-pagination`, `feature/stretch-activity-log`.
 
 ---
 

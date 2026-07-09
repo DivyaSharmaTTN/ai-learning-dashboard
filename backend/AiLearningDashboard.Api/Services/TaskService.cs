@@ -1,5 +1,6 @@
-// @branch feature/stretch-activity-log
+// @branch feature/stretch-filters-pagination
 // @history 2026-07-09 — Log Created, Updated, and StatusChanged events in TaskService
+// @history 2026-07-09 — Priority/category filters and paginated task list
 
 using AiLearningDashboard.Api.DTOs;
 using AiLearningDashboard.Api.Entities;
@@ -10,7 +11,8 @@ namespace AiLearningDashboard.Api.Services;
 
 public interface ITaskService
 {
-    Task<List<TaskDto>> GetAllAsync(string? search, string? status, CancellationToken cancellationToken = default);
+    Task<List<TaskDto>> GetAllAsync(TaskQueryDto query, CancellationToken cancellationToken = default);
+    Task<PagedResultDto<TaskDto>> GetPagedAsync(TaskQueryDto query, CancellationToken cancellationToken = default);
     Task<TaskDto?> GetByIdAsync(int id, CancellationToken cancellationToken = default);
     Task<(TaskDto? Task, string? Error)> CreateAsync(CreateTaskDto dto, CancellationToken cancellationToken = default);
     Task<(TaskDto? Task, string? Error)> UpdateAsync(int id, UpdateTaskDto dto, CancellationToken cancellationToken = default);
@@ -19,21 +21,63 @@ public interface ITaskService
 
 public class TaskService(ITaskRepository taskRepository, IActivityLogService activityLogService) : ITaskService
 {
-    public async Task<List<TaskDto>> GetAllAsync(string? search, string? status, CancellationToken cancellationToken = default)
+    public async Task<List<TaskDto>> GetAllAsync(TaskQueryDto query, CancellationToken cancellationToken = default)
     {
-        TaskStatus? statusFilter = null;
-        if (!string.IsNullOrWhiteSpace(status))
-        {
-            if (!Enum.TryParse<TaskStatus>(status, true, out var parsed))
-            {
-                return [];
-            }
+        var listQuery = ParseQuery(query);
+        var tasks = await taskRepository.GetAllAsync(listQuery, cancellationToken);
+        return tasks.Select(MapToDto).ToList();
+    }
 
-            statusFilter = parsed;
+    public async Task<PagedResultDto<TaskDto>> GetPagedAsync(TaskQueryDto query, CancellationToken cancellationToken = default)
+    {
+        var listQuery = ParseQuery(query);
+        listQuery.Page = Math.Max(1, query.Page ?? 1);
+        listQuery.PageSize = Math.Clamp(
+            query.PageSize ?? TaskRepository.DefaultPageSize,
+            1,
+            TaskRepository.MaxPageSize);
+
+        var (items, totalCount) = await taskRepository.GetPagedAsync(listQuery, cancellationToken);
+        var pageSize = listQuery.PageSize!.Value;
+        var page = listQuery.Page!.Value;
+        var totalPages = totalCount == 0 ? 0 : (int)Math.Ceiling(totalCount / (double)pageSize);
+
+        return new PagedResultDto<TaskDto>
+        {
+            Items = items.Select(MapToDto).ToList(),
+            TotalCount = totalCount,
+            Page = page,
+            PageSize = pageSize,
+            TotalPages = totalPages
+        };
+    }
+
+    private static TaskListQuery ParseQuery(TaskQueryDto query)
+    {
+        var listQuery = new TaskListQuery
+        {
+            Search = query.Search
+        };
+
+        if (!string.IsNullOrWhiteSpace(query.Status) &&
+            Enum.TryParse<TaskStatus>(query.Status, true, out var status))
+        {
+            listQuery.Status = status;
         }
 
-        var tasks = await taskRepository.GetAllAsync(search, statusFilter, cancellationToken);
-        return tasks.Select(MapToDto).ToList();
+        if (!string.IsNullOrWhiteSpace(query.Priority) &&
+            Enum.TryParse<TaskPriority>(query.Priority, true, out var priority))
+        {
+            listQuery.Priority = priority;
+        }
+
+        if (!string.IsNullOrWhiteSpace(query.Category) &&
+            Enum.TryParse<TaskCategory>(query.Category, true, out var category))
+        {
+            listQuery.Category = category;
+        }
+
+        return listQuery;
     }
 
     public async Task<TaskDto?> GetByIdAsync(int id, CancellationToken cancellationToken = default)

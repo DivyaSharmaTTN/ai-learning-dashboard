@@ -72,6 +72,14 @@ Git workflow established. UI overhaul on `feature/modern-ai-dashboard-ui`.
 - [x] Skeleton loading, enhanced toasts/transitions
 - [x] Tests updated (8/8 passing)
 
+## Stretch: Filters & Pagination (2026-07-09)
+
+- [x] `GET /api/tasks` priority and category query params
+- [x] Paginated response when `page` is provided (`PagedResultDto`)
+- [x] `TaskPagination` component and extended `SearchFilter`
+- [x] `DashboardPage` uses `getPaged()` for list, `getAll()` for panels
+- [x] 3 backend + 1 frontend tests; 14/14 xUnit, 9/9 Vitest
+
 ## Stretch: Activity Log (2026-07-09)
 
 - [x] `ActivityLog` entity + migration `AddActivityLog`

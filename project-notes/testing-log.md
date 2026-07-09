@@ -16,7 +16,11 @@
 | UpdateTaskStatus_CreatesStatusChangeActivityLog | `TasksApiTests.cs` | ✅ Pass |
 | GetTaskActivity_ForUnknownTask_ReturnsNotFound | `TasksApiTests.cs` | ✅ Pass |
 
-**Run**: `cd backend && dotnet test` — 11/11 passed
+| GetTasks_WithPriorityFilter_ReturnsMatchingTasks | `TasksApiTests.cs` | ✅ Pass |
+| GetTasks_WithCategoryFilter_ReturnsMatchingTasks | `TasksApiTests.cs` | ✅ Pass |
+| GetTasks_WithPagination_ReturnsPagedResult | `TasksApiTests.cs` | ✅ Pass |
+
+**Run**: `cd backend && dotnet test` — 14/14 passed
 
 ## Frontend Tests (Vitest + RTL)
 
@@ -30,8 +34,9 @@
 | Status quick action PATCH | `DashboardPage.test.tsx` | ✅ Pass |
 | Debounced search (list-only) | `DashboardPage.test.tsx` | ✅ Pass |
 | Search button immediate apply | `DashboardPage.test.tsx` | ✅ Pass |
+| Priority filter resets page 1 | `DashboardPage.test.tsx` | ✅ Pass |
 
-**Run**: `cd frontend && npm test` — 8/8 passed
+**Run**: `cd frontend && npm test` — 9/9 passed
 
 ## Edge Cases Covered
 
@@ -42,6 +47,9 @@
 | Dashboard count increment | BT-07 |
 | Overdue excludes completed | BT-08 (before/after assertion) |
 | Status filter | BT status filter test |
+| Priority filter | GetTasks_WithPriorityFilter_ReturnsMatchingTasks |
+| Category filter | GetTasks_WithCategoryFilter_ReturnsMatchingTasks |
+| Pagination | GetTasks_WithPagination_ReturnsPagedResult |
 | Activity log on create | CreateTask_CreatesActivityLogEntry |
 | Activity log on status change | UpdateTaskStatus_CreatesStatusChangeActivityLog |
 | Activity 404 for unknown task | GetTaskActivity_ForUnknownTask_ReturnsNotFound |
@@ -55,4 +63,4 @@
 
 ---
 
-*Last updated: 2026-07-09*
+*Last updated: 2026-07-09 — feature/stretch-filters-pagination*

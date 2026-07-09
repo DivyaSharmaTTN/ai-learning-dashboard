@@ -8,7 +8,7 @@ This application provides:
 
 - **Task management** — create, list, view, update, and change status
 - **Dashboard** — summary cards with real counts from the database
-- **Search/filter** — keyword search and status filter
+- **Search/filter** — keyword search, status, priority, and category filters with paginated task list
 - **Persistence** — SQLite via EF Core (data survives API restart)
 - **Validation** — required fields on backend and frontend
 - **UI states** — loading, empty, success, and error
@@ -174,7 +174,6 @@ See `ai-prompts/01-project-planning.md` for the initial session trace.
 ## Known Limitations
 
 - No authentication (single-user assessment scope)
-- No pagination on task list
 - SQLite only (not SQL Server)
 
 ## Future Improvements
@@ -183,7 +182,7 @@ See `ai-prompts/01-project-planning.md` for the initial session trace.
 - React Query for server state
 - CI/CD pipeline
 - Swagger/OpenAPI UI
-- Pagination and sorting
+- Sorting on task list
 
 ## License
 

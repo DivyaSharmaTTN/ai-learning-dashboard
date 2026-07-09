@@ -1,7 +1,7 @@
 # Frontend Components
 
 > Document each component as implemented.  
-> **Branch**: `feature/stretch-activity-log` (2026-07-09 activity log)
+> **Branch**: `feature/stretch-filters-pagination` (2026-07-09 filters + pagination)
 
 ---
 
@@ -30,12 +30,19 @@
 
 ## SearchFilter
 
-- **Purpose**: Independent keyword search + status filter in the Tasks section
-- **Props**: `status`, `onStatusChange`, `onSearchApply`, `listLoading?`
+- **Purpose**: Keyword search + status, priority, and category filters in the Tasks section
+- **Props**: `status`, `priority`, `category`, `onStatusChange`, `onPriorityChange`, `onCategoryChange`, `onSearchApply`, `onClearFilters`, `hasActiveFilters?`, `listLoading?`
 - **Behavior**:
   - Local `searchInput` state (not shared with topbar or global context)
   - 400ms debounce on typing; immediate apply on Enter or Search button
-  - Status filter changes apply immediately to the list
+  - Filter changes apply immediately to the list and reset pagination to page 1
+  - Clear filters button when any filter is active
+- **Reusable**: Yes
+
+## TaskPagination
+
+- **Purpose**: Prev/next controls and "Showing X–Y of Z" summary for paginated task list
+- **Props**: `page`, `totalPages`, `totalCount`, `pageSize`, `onPageChange`, `loading?`
 - **Reusable**: Yes
 
 ## TaskList / TaskListItem
@@ -79,7 +86,7 @@
 
 | Page | Notes |
 |------|-------|
-| `DashboardPage` | Split loading: `loadDashboard()` (summary + panel tasks) vs `loadTaskList()` (filtered list only); list overlay on refetch |
+| `DashboardPage` | Split loading: `loadDashboard()` (summary + panel tasks) vs `loadTaskList()` (paginated filtered list); list overlay on refetch |
 | `CreateTaskPage` | Styled form page |
 | `TaskDetailPage` | Styled edit page + `ActivityHistory` audit panel |
 
@@ -93,4 +100,4 @@
 
 ---
 
-*Last updated: 2026-07-09 — feature/stretch-activity-log*
+*Last updated: 2026-07-09 — feature/stretch-filters-pagination*

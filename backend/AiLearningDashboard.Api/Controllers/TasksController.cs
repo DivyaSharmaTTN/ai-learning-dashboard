@@ -1,5 +1,6 @@
-// @branch feature/stretch-activity-log
+// @branch feature/stretch-filters-pagination
 // @history 2026-07-09 — GET /api/tasks/{id}/activity endpoint
+// @history 2026-07-09 — Priority/category filters and paginated GET /api/tasks
 
 using AiLearningDashboard.Api.DTOs;
 using AiLearningDashboard.Api.Services;
@@ -12,12 +13,17 @@ namespace AiLearningDashboard.Api.Controllers;
 public class TasksController(ITaskService taskService, IActivityLogService activityLogService) : ControllerBase
 {
     [HttpGet]
-    public async Task<ActionResult<List<TaskDto>>> GetAll(
-        [FromQuery] string? search,
-        [FromQuery] string? status,
+    public async Task<IActionResult> GetAll(
+        [FromQuery] TaskQueryDto query,
         CancellationToken cancellationToken)
     {
-        var tasks = await taskService.GetAllAsync(search, status, cancellationToken);
+        if (query.Page.HasValue)
+        {
+            var paged = await taskService.GetPagedAsync(query, cancellationToken);
+            return Ok(paged);
+        }
+
+        var tasks = await taskService.GetAllAsync(query, cancellationToken);
         return Ok(tasks);
     }
 

@@ -1,6 +1,6 @@
 # Project Context (Cursor)
 
-> **Last updated**: 2026-07-09 — Git workflow rule canonicalized at `.cursor/rules/git-workflow.mdc`
+> **Last updated**: 2026-07-09 — Stretch filters + pagination on `feature/stretch-filters-pagination`
 
 ## What This Project Is
 
@@ -12,7 +12,7 @@ AI Learning Dashboard — a frontend-heavy assessment app for tracking learning 
 |------|-------|
 | **Stable branch** | `main` — initial commit `413947a` (`Initial project setup`); **do not recreate history** |
 | **Integration branch** | `dev` |
-| **Feature branches** | `feature/core-acceptance-review`, `feature/stretch-activity-log`, others (see `TASKS.md`) |
+| **Feature branches** | `feature/stretch-filters-pagination`, `feature/stretch-activity-log`, others (see `TASKS.md`) |
 | **Stack** | React + Vite, ASP.NET Core, EF Core SQLite |
 | **Cursor rules** | `.cursor/rules/git-workflow.mdc` (`alwaysApply: true`) |
 
@@ -54,8 +54,8 @@ See **`.cursor/rules/git-workflow.mdc`** for full rules. Summary:
 
 ## Current Focus
 
-- Core complete; stretch work on `feature/stretch-activity-log` (activity audit trail)
-- Merge feature branches → `dev`; manual E2E verification
+- Stretch: filters + pagination complete on `feature/stretch-filters-pagination`
+- Merge stretch feature branches → `dev`; manual E2E verification
 - All agents must follow `.cursor/rules/git-workflow.mdc` on every task
 
 ## Standards

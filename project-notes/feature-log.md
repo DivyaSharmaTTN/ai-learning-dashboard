@@ -144,4 +144,25 @@
 
 ---
 
+## FL-009 — Extended Filters and Pagination (Stretch)
+
+| Field | Value |
+|-------|-------|
+| **Feature name** | Priority/category filters and paginated task list |
+| **Requirement** | Stretch: filter by priority and category; paginate task list (10 per page) |
+| **Branch** | `feature/stretch-filters-pagination` |
+| **Files created** | `backend/.../Repositories/TaskListQuery.cs`, `frontend/src/components/TaskPagination.tsx`, `ai-prompts/09-stretch-filters-pagination.md` |
+| **Files modified** | `TaskRepository.cs`, `TaskService.cs`, `TasksController.cs`, `TaskDtos.cs`, `SearchFilter.tsx`, `DashboardPage.tsx`, `tasks.ts`, `types/index.ts`, `index.css`, `TasksApiTests.cs`, `DashboardPage.test.tsx`, docs and project notes |
+| **Database changes** | None (query-only) |
+| **API changes** | `GET /api/tasks` accepts `priority`, `category`, `page`, `pageSize`; returns `PagedResultDto` when `page` is set |
+| **Frontend changes** | Priority/category dropdowns, clear-filters button, `TaskPagination` controls, list uses `tasksApi.getPaged()` |
+| **Testing added** | 3 xUnit (priority, category, pagination); 1 Vitest (priority resets page); backend 14/14, frontend 9/9 |
+| **Cursor prompt summary** | Create branch from dev and implement stretch filters + pagination |
+| **What AI suggested** | Optional pagination on API (flat array without `page`, paged envelope with `page`); dashboard panels keep unpaginated fetch |
+| **What was accepted** | Dual response shape, default page size 10, filter reset to page 1 |
+| **Status** | Complete |
+| **Date** | 2026-07-09 |
+
+---
+
 *Append new features below.*

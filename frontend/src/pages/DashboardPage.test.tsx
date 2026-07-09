@@ -1,5 +1,6 @@
 /**
- * @branch feature/fix-search-debounce
+ * @branch feature/stretch-filters-pagination
+ * @history 2026-07-09 — Tests for paginated list and extended filters
  * @history 2026-07-06 — Tests for debounced list-only search
  */
 import { render, screen, waitFor } from '@testing-library/react';
@@ -17,14 +18,19 @@ vi.mock('../api/dashboard', () => ({
   dashboardApi: { getSummary: vi.fn() },
 }));
 
-vi.mock('../api/tasks', () => ({
-  tasksApi: {
-    getAll: vi.fn(),
-    create: vi.fn(),
-    update: vi.fn(),
-    updateStatus: vi.fn(),
-  },
-}));
+vi.mock('../api/tasks', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('../api/tasks')>();
+  return {
+    ...actual,
+    tasksApi: {
+      getAll: vi.fn(),
+      getPaged: vi.fn(),
+      create: vi.fn(),
+      update: vi.fn(),
+      updateStatus: vi.fn(),
+    },
+  };
+});
 
 import { dashboardApi } from '../api/dashboard';
 import { tasksApi } from '../api/tasks';
@@ -57,6 +63,14 @@ const mockTasks: Task[] = [
     isOverdue: false,
   },
 ];
+
+const mockPagedResult = {
+  items: mockTasks,
+  totalCount: 1,
+  page: 1,
+  pageSize: 10,
+  totalPages: 1,
+};
 
 function renderDashboard() {
   return render(
@@ -131,6 +145,7 @@ describe('DashboardPage', () => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
     vi.mocked(dashboardApi.getSummary).mockResolvedValue(mockSummary);
     vi.mocked(tasksApi.getAll).mockResolvedValue(mockTasks);
+    vi.mocked(tasksApi.getPaged).mockResolvedValue(mockPagedResult);
   });
 
   afterEach(() => {
@@ -146,7 +161,13 @@ describe('DashboardPage', () => {
   });
 
   it('shows empty state when no tasks', async () => {
-    vi.mocked(tasksApi.getAll).mockResolvedValue([]);
+    vi.mocked(tasksApi.getPaged).mockResolvedValue({
+      items: [],
+      totalCount: 0,
+      page: 1,
+      pageSize: 10,
+      totalPages: 0,
+    });
 
     renderDashboard();
 
@@ -177,20 +198,20 @@ describe('DashboardPage', () => {
     await screen.findByRole('link', { name: 'Learn React' });
 
     const initialSummaryCalls = vi.mocked(dashboardApi.getSummary).mock.calls.length;
-    const initialTaskCalls = vi.mocked(tasksApi.getAll).mock.calls.length;
+    const initialPagedCalls = vi.mocked(tasksApi.getPaged).mock.calls.length;
 
     const searchInput = screen.getByPlaceholderText(/search by title/i);
     await user.type(searchInput, 'react');
 
     // Before debounce: no extra list fetch
-    expect(vi.mocked(tasksApi.getAll).mock.calls.length).toBe(initialTaskCalls);
+    expect(vi.mocked(tasksApi.getPaged).mock.calls.length).toBe(initialPagedCalls);
     expect(vi.mocked(dashboardApi.getSummary).mock.calls.length).toBe(initialSummaryCalls);
 
     await vi.advanceTimersByTimeAsync(400);
 
     await waitFor(() => {
-      expect(vi.mocked(tasksApi.getAll)).toHaveBeenCalledWith(
-        expect.objectContaining({ search: 'react' }),
+      expect(vi.mocked(tasksApi.getPaged)).toHaveBeenCalledWith(
+        expect.objectContaining({ search: 'react', page: 1 }),
       );
     });
     expect(vi.mocked(dashboardApi.getSummary).mock.calls.length).toBe(initialSummaryCalls);
@@ -207,8 +228,23 @@ describe('DashboardPage', () => {
     await user.click(screen.getByRole('button', { name: 'Search' }));
 
     await waitFor(() => {
-      expect(vi.mocked(tasksApi.getAll)).toHaveBeenCalledWith(
-        expect.objectContaining({ search: 'hooks' }),
+      expect(vi.mocked(tasksApi.getPaged)).toHaveBeenCalledWith(
+        expect.objectContaining({ search: 'hooks', page: 1 }),
+      );
+    });
+  });
+
+  it('resets to page 1 when priority filter changes', async () => {
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+
+    renderDashboard();
+    await screen.findByRole('link', { name: 'Learn React' });
+
+    await user.selectOptions(screen.getByLabelText(/priority filter/i), 'High');
+
+    await waitFor(() => {
+      expect(vi.mocked(tasksApi.getPaged)).toHaveBeenCalledWith(
+        expect.objectContaining({ priority: 'High', page: 1 }),
       );
     });
   });

@@ -105,9 +105,10 @@ ai-learning-dashboard/
 | Documentation scaffold | ✅ Complete |
 | Backend API | ✅ Complete |
 | Frontend UI | ✅ Complete (modern AI SaaS overhaul) |
-| Backend tests | ✅ 11 passing |
-| Frontend tests | ✅ 8 passing |
+| Backend tests | ✅ 14 passing |
+| Frontend tests | ✅ 9 passing |
 | Stretch: activity log | ✅ Complete |
+| Stretch: filters + pagination | ✅ Complete |
 | README | ✅ Complete |
 | Manual E2E verification | ⏳ Recommended |
 
@@ -122,16 +123,17 @@ ai-learning-dashboard/
 - FluentValidation on create/update DTOs
 - React + Vite frontend with modern AI SaaS UI (charts, dark mode, insights)
 - Loading, empty, success (toast), error UI states
-- xUnit integration tests (11) and Vitest component tests (8)
+- xUnit integration tests (14) and Vitest component tests (9)
 - Activity log: `ActivityLogs` table, audit API, task detail history panel (stretch)
+- Extended filters (priority, category) and paginated task list (stretch)
 - Git workflow rule canonicalized at `.cursor/rules/git-workflow.mdc` with append-only doc policy
 
 ## Pending Work
 
 1. Manual end-to-end verification with both servers running
 2. Merge stretch and core feature branches → `dev`
-3. Remaining stretch features (filters, pagination, auth, etc.)
-4. Commit workflow rule + activity log branches when ready
+3. Remaining stretch features (auth, sorting, etc.)
+4. Commit workflow rule + stretch branches when ready
 
 ## Important Decisions
 
@@ -160,4 +162,4 @@ ai-learning-dashboard/
 - React Query for caching
 - Swagger UI in production README
 - GitHub Actions CI
-- Pagination on task list
+- Sorting on task list

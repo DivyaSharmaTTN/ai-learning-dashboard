@@ -33,7 +33,7 @@ Small dashboard for learning goals and project tasks.
 5. Update all task fields
 6. Mark In Progress
 7. Mark Completed
-8. Keyword search OR status filter
+8. Keyword search OR status filter (extended stretch: priority, category, pagination)
 9. SQLite persistence
 10. Required field validation (BE + FE)
 11. Loading, empty, success, error UI states
@@ -60,7 +60,7 @@ Small dashboard for learning goals and project tasks.
 
 ## Frontend Components
 
-DashboardPage, SummaryCards, TaskList, TaskDetailPage, TaskForm, SearchFilter, ActivityHistory, LoadingState, EmptyState, ErrorState, Toast
+DashboardPage, SummaryCards, TaskList, TaskDetailPage, TaskForm, SearchFilter, TaskPagination, ActivityHistory, LoadingState, EmptyState, ErrorState, Toast
 
 ## Documentation Requirements
 
@@ -74,3 +74,4 @@ All files under `/docs`, `/project-notes`, `/ai-prompts`, `/tool-specific/cursor
 |------|--------|
 | 2026-07-03 | Initial spec |
 | 2026-07-09 | ActivityLog entity, activity API, ActivityHistory; git-workflow doc rules |
+| 2026-07-09 | Extended task filters (priority, category) and paginated GET /api/tasks |

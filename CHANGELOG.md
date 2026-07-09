@@ -14,6 +14,12 @@ The **initial commit** (`413947a` — `Initial project setup`) exists on `main` 
 
 ### Added
 
+- **Extended filters and pagination** (`feature/stretch-filters-pagination`) (2026-07-09)
+  - Priority and category filters on task list (API + UI)
+  - Paginated `GET /api/tasks?page=&pageSize=` with `PagedResultDto` response
+  - `TaskPagination` component with prev/next and result summary
+  - Clear filters button; filter changes reset to page 1
+  - 3 additional backend tests (14 total); 1 additional frontend test (9 total)
 - **Git workflow Cursor rule** (2026-07-09)
   - Canonical `.cursor/rules/git-workflow.mdc` (`alwaysApply: true`)
   - Append-only documentation history policy across `docs/`, `project-notes/`, `ai-prompts/`, `cursor-workflow`
