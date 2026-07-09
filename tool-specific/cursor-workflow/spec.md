@@ -14,6 +14,10 @@ Small dashboard for learning goals and project tasks.
 
 `id`, `title`, `description`, `category`, `priority`, `status`, `ownerId`, `dueDate`, `createdAt`, `updatedAt`
 
+### ActivityLog (stretch — implemented)
+
+`id`, `taskId`, `action`, `previousValue`, `newValue`, `user`, `timestamp`
+
 ## Enums
 
 - **Priority**: Low, Medium, High
@@ -50,13 +54,23 @@ Small dashboard for learning goals and project tasks.
 - GET/POST `/api/tasks`
 - GET/PUT `/api/tasks/{id}`
 - PATCH `/api/tasks/{id}/status`
+- GET `/api/tasks/{id}/activity` (stretch: audit history)
 - GET `/api/dashboard/summary`
 - GET `/api/users`
 
 ## Frontend Components
 
-DashboardPage, SummaryCards, TaskList, TaskDetailPage, TaskForm, SearchFilter, LoadingState, EmptyState, ErrorState, Toast
+DashboardPage, SummaryCards, TaskList, TaskDetailPage, TaskForm, SearchFilter, ActivityHistory, LoadingState, EmptyState, ErrorState, Toast
 
 ## Documentation Requirements
 
-All files under `/docs`, `/project-notes`, `/ai-prompts`, `/tool-specific/cursor-workflow` must stay synchronized with code.
+All files under `/docs`, `/project-notes`, `/ai-prompts`, `/tool-specific/cursor-workflow`, and `.cursor/rules` must stay synchronized with code. **Append** history; never overwrite prior entries (see `.cursor/rules/git-workflow.mdc`).
+
+---
+
+## History
+
+| Date | Change |
+|------|--------|
+| 2026-07-03 | Initial spec |
+| 2026-07-09 | ActivityLog entity, activity API, ActivityHistory; git-workflow doc rules |

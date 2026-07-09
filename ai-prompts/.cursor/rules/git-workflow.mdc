@@ -1,0 +1,14 @@
+---
+description: Pointer to canonical git-workflow rule (see repository root)
+alwaysApply: false
+---
+
+# Git Workflow Rule — Canonical Location
+
+The active Cursor rule lives at:
+
+**`.cursor/rules/git-workflow.mdc`** (repository root)
+
+This copy exists for discoverability under `ai-prompts/`. Do not edit here — update the root file only.
+
+Prompt history for workflow changes: `ai-prompts/08-git-workflow-rules.md`

@@ -82,6 +82,13 @@ Git workflow established. UI overhaul on `feature/modern-ai-dashboard-ui`.
 - [x] 3 activity log integration tests (11 backend total)
 - [x] Project notes and API contract updated
 
+## Git Workflow Rules (2026-07-09)
+
+- [x] Canonical rule: `.cursor/rules/git-workflow.mdc` (`alwaysApply: true`)
+- [x] `ai-prompts/08-git-workflow-rules.md` prompt history
+- [x] Sync `cursor-rules-or-instructions.md`, `project-context.md`, `spec.md`
+- [x] Append-only history policy documented across workflow files
+
 ---
 
 ## Session 1 Notes

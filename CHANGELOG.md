@@ -14,6 +14,10 @@ The **initial commit** (`413947a` — `Initial project setup`) exists on `main` 
 
 ### Added
 
+- **Git workflow Cursor rule** (2026-07-09)
+  - Canonical `.cursor/rules/git-workflow.mdc` (`alwaysApply: true`)
+  - Append-only documentation history policy across `docs/`, `project-notes/`, `ai-prompts/`, `cursor-workflow`
+  - `ai-prompts/08-git-workflow-rules.md` prompt trace entry
 - **Activity log / audit history** (`feature/stretch-activity-log`)
   - `ActivityLogs` table and EF migration
   - Automatic logging on task create, update, and status change

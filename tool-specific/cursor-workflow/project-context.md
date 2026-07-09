@@ -1,5 +1,7 @@
 # Project Context (Cursor)
 
+> **Last updated**: 2026-07-09 — Git workflow rule canonicalized at `.cursor/rules/git-workflow.mdc`
+
 ## What This Project Is
 
 AI Learning Dashboard — a frontend-heavy assessment app for tracking learning goals and project tasks.
@@ -8,27 +10,32 @@ AI Learning Dashboard — a frontend-heavy assessment app for tracking learning 
 
 | Item | Value |
 |------|-------|
-| **Active branch** | `feature/modern-ai-dashboard-ui` (from `dev`) |
-| **Integration branch** | `dev` |
 | **Stable branch** | `main` — initial commit `413947a` (`Initial project setup`); **do not recreate history** |
+| **Integration branch** | `dev` |
+| **Feature branches** | `feature/core-acceptance-review`, `feature/stretch-activity-log`, others (see `TASKS.md`) |
 | **Stack** | React + Vite, ASP.NET Core, EF Core SQLite |
+| **Cursor rules** | `.cursor/rules/git-workflow.mdc` (`alwaysApply: true`) |
 
 ## Git Workflow (Mandatory)
 
-1. **Never work directly on `main`**
-2. Branch from `dev`: `feature/<task-name>`
-3. Merge feature → `dev` → PR to `main` when stable
-4. Keep solution buildable; run `dotnet build` + `dotnet test` + `npm test` before completing tasks
-5. Update README, CHANGELOG, ARCHITECTURE, TASKS, and project notes after every change
+See **`.cursor/rules/git-workflow.mdc`** for full rules. Summary:
+
+1. **Never work directly on `main`** for features
+2. **Do not work directly on `dev`** unless explicitly asked
+3. Branch from `dev`: `feature/<task-name>`, `bugfix/`, `docs/`, `test/`
+4. Merge feature → `dev` → PR to `main` when stable
+5. Keep solution buildable; run `dotnet build` + `dotnet test` + `npm test` before completing tasks
+6. **Append** documentation on every change; never overwrite history
+7. Update README, CHANGELOG, ARCHITECTURE, TASKS, and project notes after every change
 
 ## Key Constraints (Always Enforce)
 
 1. **No hardcoded dashboard counts** — must come from `/api/dashboard/summary`
 2. **All UI states** — loading, empty, success, error
 3. **Dual validation** — backend + frontend
-4. **Update docs** on every implementation change
+4. **Update docs** on every implementation change (append only — see `.cursor/rules/git-workflow.mdc`)
 5. **Append** to project notes; never overwrite history
-6. **No stretch features** until core complete
+6. **No stretch features** until core complete (stretch branches OK with doc traceability)
 7. **No secrets** in repo
 
 ## Folder Map
@@ -38,6 +45,7 @@ AI Learning Dashboard — a frontend-heavy assessment app for tracking learning 
 - `docs/` — Assessment documentation
 - `project-notes/` — Living logs (source of truth for current state: `project-memory.md`)
 - `ai-prompts/` — Prompt history with commit placeholders
+- `.cursor/rules/` — Always-applied Cursor rules (`git-workflow.mdc`)
 - `ARCHITECTURE.md`, `CHANGELOG.md`, `TASKS.md` — Root workflow docs
 
 ## API Base URL
@@ -46,7 +54,9 @@ AI Learning Dashboard — a frontend-heavy assessment app for tracking learning 
 
 ## Current Focus
 
-Git workflow established on `dev`. Next: manual E2E verification, merge feature branches.
+- Core complete; stretch work on `feature/stretch-activity-log` (activity audit trail)
+- Merge feature branches → `dev`; manual E2E verification
+- All agents must follow `.cursor/rules/git-workflow.mdc` on every task
 
 ## Standards
 

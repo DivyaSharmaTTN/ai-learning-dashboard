@@ -1,0 +1,111 @@
+---
+description: Git workflow, documentation history, and prompt traceability rules
+alwaysApply: true
+---
+
+# Git Workflow and Documentation History Rules
+
+For every new feature, bug fix, test update, documentation update, or refactor, follow these rules.
+
+## Branch Rules
+
+- Do not make feature changes directly on main.
+- Do not make feature changes directly on dev unless explicitly asked.
+- Create a new descriptive branch before starting work.
+
+Examples:
+- feature/task-filter
+- feature/dashboard-summary
+- bugfix/dashboard-count
+- docs/readme-update
+- test/core-validation
+- feature/stretch-activity-log
+
+## Documentation History Rules
+
+Whenever code changes are made, update all affected history/documentation files.
+
+Update relevant files in:
+
+- docs/
+- project-notes/
+- ai-prompts/
+- tool-specific/cursor-workflow/
+
+Never overwrite previous history. Always append new entries.
+
+## Required History Updates
+
+For every branch/task, record:
+
+- Branch name
+- Date
+- Purpose of change
+- Files created
+- Files modified
+- Database changes
+- API changes
+- Frontend changes
+- Tests added or updated
+- Cursor prompt summary
+- What AI suggested
+- What was accepted
+- What was changed
+- What was rejected
+- Reason
+- Suggested commit message
+
+## Project Notes to Maintain
+
+Update these when relevant:
+
+- project-notes/project-memory.md
+- project-notes/feature-log.md
+- project-notes/decision-log.md
+- project-notes/bug-log.md
+- project-notes/api-log.md
+- project-notes/database-log.md
+- project-notes/frontend-components.md
+- project-notes/testing-log.md
+
+## Cursor Workflow Files to Maintain
+
+Update these when relevant:
+
+- tool-specific/cursor-workflow/project-context.md
+- tool-specific/cursor-workflow/spec.md
+- tool-specific/cursor-workflow/tasks.md
+- tool-specific/cursor-workflow/cursor-rules-or-instructions.md
+
+## AI Prompt History
+
+Update the correct file under ai-prompts/.
+
+Examples:
+- Planning → ai-prompts/01-project-planning.md
+- Backend → ai-prompts/02-backend-design.md
+- Frontend → ai-prompts/03-frontend-ui.md
+- Testing → ai-prompts/04-testing.md
+- Debugging → ai-prompts/05-debugging.md
+- Code review → ai-prompts/06-code-review.md
+- Stretch feature → create a new numbered prompt file if needed
+- Git workflow / process → ai-prompts/08-git-workflow-rules.md
+
+## End of Task Summary
+
+At the end of every task, provide:
+
+1. Files created
+2. Files modified
+3. Database changes
+4. API changes
+5. Frontend changes
+6. Tests added or updated
+7. Documentation updated
+8. Suggested commit message
+9. Suggested branch name
+10. Suggested PR description
+11. Remaining tasks
+12. Risks
+
+Never leave documentation out of sync with code.

@@ -82,4 +82,17 @@
 
 ---
 
+## DL-007 — Canonical Cursor Rule Location
+
+| Field | Value |
+|-------|-------|
+| **Decision** | Single source of truth at `.cursor/rules/git-workflow.mdc` with `alwaysApply: true` |
+| **Why chosen** | Cursor loads rules from repo-root `.cursor/rules/`; avoids drift from duplicate copies |
+| **Alternative considered** | Rule only under `ai-prompts/.cursor/rules/` |
+| **Trade-off** | `ai-prompts/.cursor` copy is a pointer only |
+| **Impact** | All agents append history to project-notes, ai-prompts, cursor-workflow on every change |
+| **Date** | 2026-07-09 |
+
+---
+
 *Append new decisions below.*

@@ -126,4 +126,22 @@
 
 ---
 
+## FL-008 — Canonical Git Workflow Cursor Rule
+
+| Field | Value |
+|-------|-------|
+| **Feature name** | Adopt `.cursor/rules/git-workflow.mdc` as always-applied project rule |
+| **Requirement** | User mandate: follow git-workflow rule; append doc history on every change |
+| **Branch** | `docs/git-workflow-rules` (suggested) or current working branch |
+| **Files created** | `.cursor/rules/git-workflow.mdc`, `ai-prompts/08-git-workflow-rules.md` |
+| **Files modified** | `ai-prompts/.cursor/rules/git-workflow.mdc` (pointer), `tool-specific/cursor-workflow/*`, `project-notes/decision-log.md`, `project-notes/project-memory.md`, `CHANGELOG.md`, `README.md` |
+| **Database changes** | None |
+| **API changes** | None |
+| **Frontend changes** | None |
+| **Testing added** | None |
+| **Status** | Complete |
+| **Date** | 2026-07-09 |
+
+---
+
 *Append new features below.*

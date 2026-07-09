@@ -129,6 +129,8 @@ npm test
 | `dev` | Integration branch; merge feature branches here |
 | `feature/<task-name>` | All new work (e.g. `feature/git-workflow-setup`) |
 
+**Cursor agents**: follow `.cursor/rules/git-workflow.mdc` — branch from `dev`, append documentation on every change, never overwrite history.
+
 ### Typical flow
 
 ```bash
@@ -167,6 +169,7 @@ See `ai-prompts/01-project-planning.md` for the initial session trace.
 | `docs/api-contract.md` | REST API contract |
 | `project-notes/project-memory.md` | Current project state |
 | `tool-specific/cursor-workflow/` | Cursor context and tasks |
+| `.cursor/rules/git-workflow.mdc` | Always-applied branch + documentation history rules |
 
 ## Known Limitations
 

@@ -1,6 +1,6 @@
 # Project Memory
 
-> **Last updated**: 2026-07-09 — Activity log stretch on `feature/stretch-activity-log`
+> **Last updated**: 2026-07-09 — Git workflow rule at `.cursor/rules/git-workflow.mdc`
 
 ## Git Workflow
 
@@ -8,9 +8,10 @@
 |--------|---------------|
 | `main` | `413947a` — Initial project setup (baseline; do not recreate) |
 | `dev` | Integration branch for all merged features |
-| `feature/*` | Active development (current: `feature/stretch-activity-log`) |
+| `feature/*` | Active development — e.g. `feature/stretch-activity-log`, `feature/core-acceptance-review` |
 
-**Policy**: Never commit directly to `main`. All new work branches from `dev`.
+**Policy**: Never commit directly to `main`. Do not commit feature work to `dev` unless asked. Branch from `dev`.  
+**Cursor rule**: `.cursor/rules/git-workflow.mdc` — append doc history on every change; never overwrite prior entries.
 
 ## Current Architecture
 
@@ -29,6 +30,7 @@ React (Vite) SPA  ──HTTP/JSON──►  ASP.NET Core Web API  ──EF Core�
 | Backend tests | xUnit, WebApplicationFactory |
 | Frontend tests | Vitest, React Testing Library |
 | AI tooling | Cursor |
+| Cursor rules | `.cursor/rules/git-workflow.mdc` (always apply) |
 
 ## Folder Structure
 
@@ -122,12 +124,14 @@ ai-learning-dashboard/
 - Loading, empty, success (toast), error UI states
 - xUnit integration tests (11) and Vitest component tests (8)
 - Activity log: `ActivityLogs` table, audit API, task detail history panel (stretch)
+- Git workflow rule canonicalized at `.cursor/rules/git-workflow.mdc` with append-only doc policy
 
 ## Pending Work
 
 1. Manual end-to-end verification with both servers running
 2. Merge stretch and core feature branches → `dev`
 3. Remaining stretch features (filters, pagination, auth, etc.)
+4. Commit workflow rule + activity log branches when ready
 
 ## Important Decisions
 
@@ -138,6 +142,7 @@ ai-learning-dashboard/
 | FluentValidation | Clear backend validation messages |
 | String enum JSON | Readable API responses for React |
 | Activity log user = owner name | JWT auth not yet implemented (stretch) |
+| Canonical git-workflow rule | `.cursor/rules/git-workflow.mdc`; append-only docs on every change |
 | No auth (core) | Out of assessment scope; auth planned as stretch |
 
 ## Design Trade-offs
