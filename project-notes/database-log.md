@@ -68,11 +68,26 @@
 | `20260703101544_InitialCreate` | 2026-07-03 | Users + ProjectTasks + seed users |
 | `20260709111559_AddActivityLog` | 2026-07-09 | ActivityLogs table + FK/index (stretch) |
 | `AddAuthPasswordHashAndUsers` | 2026-07-09 | PasswordHash column + Admin/User seed (stretch auth) |
+| `20260713102457_AddNotifications` | 2026-07-13 | Notifications table + FKs/indexes (in-app inbox) |
 
 ## Indexes
 
 - `IX_ProjectTasks_OwnerId` on `ProjectTasks.OwnerId`
 - `IX_ActivityLogs_TaskId` on `ActivityLogs.TaskId`
+- `IX_Notifications_RecipientUserId` on `Notifications.RecipientUserId`
+- `IX_Notifications_RecipientUserId_IsRead` on `(RecipientUserId, IsRead)`
+
+## Notifications Table (2026-07-13)
+
+| Column | Type | Notes |
+|--------|------|-------|
+| Id | int PK | Autoincrement |
+| RecipientUserId | int FK → Users | Cascade delete |
+| TaskId | int FK → ProjectTasks | Cascade delete |
+| Message | string(500) | Display text |
+| Type | string(50) | TaskAssigned / TaskStarted / TaskCompleted |
+| IsRead | bool | Default false |
+| CreatedAt | DateTime | UTC |
 
 ## Validation Rules
 
@@ -81,4 +96,4 @@
 
 ---
 
-*Last updated: 2026-07-09 — feature/stretch-auth-rbac*
+*Last updated: 2026-07-13 — feature/task-notifications*

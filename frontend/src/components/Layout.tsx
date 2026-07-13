@@ -1,9 +1,10 @@
 /**
+ * @branch feature/task-notifications
+ * @history 2026-07-13 — Wire NotificationBell into topbar
  * @branch feature/stretch-auth-rbac
  * @history 2026-07-09 — Dynamic user display, logout, role-based nav
  */
 import {
-  Bell,
   LayoutDashboard,
   ListTodo,
   LogOut,
@@ -12,6 +13,7 @@ import {
 } from 'lucide-react';
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { NotificationBell } from './NotificationBell';
 import { ThemeToggle } from './ui/ThemeToggle';
 
 const pageTitles: Record<string, string> = {
@@ -93,10 +95,7 @@ export function Layout() {
           <h1 className="topbar-title">{pageTitle}</h1>
 
           <div className="topbar-actions">
-            <button type="button" className="icon-btn notification-btn" aria-label="Notifications">
-              <Bell size={18} />
-              <span className="notification-dot" />
-            </button>
+            <NotificationBell />
             <ThemeToggle />
             <button type="button" className="icon-btn" aria-label="Sign out" onClick={logout}>
               <LogOut size={18} />

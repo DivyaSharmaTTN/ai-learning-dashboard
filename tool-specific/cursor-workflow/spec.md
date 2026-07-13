@@ -55,12 +55,13 @@ Small dashboard for learning goals and project tasks.
 - GET/PUT `/api/tasks/{id}`
 - PATCH `/api/tasks/{id}/status`
 - GET `/api/tasks/{id}/activity` (stretch: audit history)
+- GET `/api/notifications` (+ unread-count, mark read, mark all read)
 - GET `/api/dashboard/summary`
 - GET `/api/users`
 
 ## Frontend Components
 
-DashboardPage, SummaryCards, TaskList, TaskDetailPage, TaskForm, SearchFilter, TaskPagination, ActivityHistory, LoadingState, EmptyState, ErrorState, Toast
+DashboardPage, SummaryCards, TaskList, TaskDetailPage, TaskForm, SearchFilter, TaskPagination, ActivityHistory, NotificationBell, LoadingState, EmptyState, ErrorState, Toast
 
 ## Documentation Requirements
 
@@ -77,3 +78,4 @@ All files under `/docs`, `/project-notes`, `/ai-prompts`, `/tool-specific/cursor
 | 2026-07-09 | Extended task filters (priority, category) and paginated GET /api/tasks |
 | 2026-07-09 | JWT auth + RBAC: login API, Admin/User roles, protected routes |
 | 2026-07-09 | Auth UI review: Admin-only task creation documented; login page redesign |
+| 2026-07-13 | In-app notifications: Notification entity, APIs, NotificationBell dropdown |

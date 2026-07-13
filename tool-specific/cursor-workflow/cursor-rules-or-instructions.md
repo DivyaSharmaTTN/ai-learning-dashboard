@@ -80,3 +80,4 @@ Provide:
 |------|--------|
 | 2026-07-03 | Initial cursor rules and assessment standards |
 | 2026-07-09 | Aligned with `.cursor/rules/git-workflow.mdc`; append-only history enforced |
+| 2026-07-13 | Task notifications stretch tracked; no rule change required |

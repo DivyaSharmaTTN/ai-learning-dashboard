@@ -98,3 +98,28 @@ npm test
 ## Traceability
 
 Test additions logged in `project-notes/testing-log.md` with date and files.
+
+---
+
+## History — 2026-07-13 — feature/task-notifications
+
+### Backend (`NotificationsApiTests`)
+
+| ID | Case |
+|----|------|
+| NT-01 | Assign task → User receives TaskAssigned message |
+| NT-02 | User starts task → Admin receives TaskStarted message |
+| NT-03 | User completes task → Admin receives TaskCompleted message |
+| NT-04 | Mark one as read updates `isRead` |
+| NT-05 | Mark all as read clears unread count |
+| NT-06 | Mark another user's notification → 403 |
+| NT-07 | Unauthenticated GET → 401 |
+
+### Frontend (`NotificationBell.test.tsx`)
+
+| ID | Case |
+|----|------|
+| NFT-01 | Unread badge when count > 0 |
+| NFT-02 | Dropdown lists notifications |
+| NFT-03 | Click navigates to `/tasks/:id` and marks read |
+| NFT-04 | Mark all as read |

@@ -64,6 +64,7 @@ App (ThemeProvider + AuthProvider + Router + ToastProvider)
 - **User** (seeded): id, name, email, role, passwordHash? (BCrypt for auth users)
 - **ProjectTask**: id, title, description, category, priority, status, ownerId, dueDate, createdAt, updatedAt
 - **ActivityLog** (stretch): id, taskId, action, previousValue, newValue, user, timestamp
+- **Notification** (stretch): id, recipientUserId, taskId, message, type, isRead, createdAt
 
 ## Key Business Rules
 
@@ -71,6 +72,7 @@ App (ThemeProvider + AuthProvider + Router + ToastProvider)
 - **Overdue**: `dueDate < today (UTC)` AND `status ≠ Completed`
 - **Validation**: FluentValidation (backend) + form validation (frontend)
 - **Activity log**: Written on task create/update/status change; `GET /api/tasks/{id}/activity`
+- **Notifications**: Assign → owner; start/complete → Admin role users; inbox via `/api/notifications`
 
 ## Git Branch Architecture
 
@@ -82,9 +84,9 @@ main          ← stable; initial commit only baseline (413947a)
 
 ## Test Architecture
 
-- **Backend**: xUnit + `WebApplicationFactory`, SQLite test DB (22 tests)
-- **Frontend**: Vitest + RTL, mocked API modules (11 tests)
+- **Backend**: xUnit + `WebApplicationFactory`, SQLite test DB (29 tests)
+- **Frontend**: Vitest + RTL, mocked API modules (NotificationBell + existing page tests)
 
 ---
 
-*Last updated: 2026-07-09 — JWT auth RBAC stretch*
+*Last updated: 2026-07-13 — feature/task-notifications*

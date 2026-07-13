@@ -364,6 +364,10 @@ a {
   gap: 0.625rem;
 }
 
+.notification-bell {
+  position: relative;
+}
+
 .notification-btn {
   position: relative;
 }
@@ -377,6 +381,93 @@ a {
   border-radius: 50%;
   background: var(--danger);
   border: 2px solid var(--sidebar-bg);
+}
+
+.notification-dropdown {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  right: 0;
+  width: min(360px, calc(100vw - 2rem));
+  max-height: 420px;
+  display: flex;
+  flex-direction: column;
+  z-index: 40;
+  overflow: hidden;
+  border-radius: 14px;
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 12px 40px rgba(15, 23, 42, 0.18);
+}
+
+.notification-dropdown-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.875rem 1rem;
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.notification-mark-all {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  border: none;
+  background: transparent;
+  color: var(--accent);
+  font-size: 0.75rem;
+  cursor: pointer;
+  padding: 0.25rem 0.35rem;
+  border-radius: 6px;
+}
+
+.notification-mark-all:hover {
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+}
+
+.notification-dropdown-list {
+  overflow-y: auto;
+  max-height: 340px;
+}
+
+.notification-empty {
+  margin: 0;
+  padding: 1.25rem 1rem;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  text-align: center;
+}
+
+.notification-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.35rem;
+  width: 100%;
+  border: none;
+  border-bottom: 1px solid var(--glass-border);
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  padding: 0.875rem 1rem;
+  cursor: pointer;
+}
+
+.notification-item:hover {
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+}
+
+.notification-item--unread {
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+}
+
+.notification-item-message {
+  font-size: 0.875rem;
+  line-height: 1.35;
+}
+
+.notification-item-time {
+  font-size: 0.75rem;
+  color: var(--text-muted);
 }
 
 .user-chip {

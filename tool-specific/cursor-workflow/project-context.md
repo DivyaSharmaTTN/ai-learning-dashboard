@@ -54,8 +54,9 @@ See **`.cursor/rules/git-workflow.mdc`** for full rules. Summary:
 
 ## Current Focus
 
-- Stretch: JWT auth + RBAC complete on `feature/stretch-auth-rbac`
-- Merge stretch feature branches → `dev`; manual E2E with login as Admin/User
+- Stretch: in-app notifications complete on `feature/task-notifications`
+- Merge stretch feature branches → `dev` when requested; do not merge notifications yet
+- Manual E2E: assign as Admin, start/complete as User, verify bell messages
 - All agents must follow `.cursor/rules/git-workflow.mdc` on every task
 
 ## Standards

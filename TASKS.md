@@ -22,6 +22,7 @@
 - [x] `feature/stretch-activity-log` — Activity log entity, API, task detail UI
 - [x] `feature/stretch-filters-pagination` — Priority/category filters and paginated task list
 - [x] Adopt `.cursor/rules/git-workflow.mdc` — append-only doc history on every change
+- [x] `feature/task-notifications` — In-app notifications (bell dropdown, assign/status alerts)
 - [ ] Merge feature branches → `dev`
 - [ ] Never commit directly to `main`
 

@@ -205,4 +205,27 @@
 
 ---
 
+## FL-012 — In-App Task Notifications
+
+| Field | Value |
+|-------|-------|
+| **Feature name** | Persisted in-app notifications with bell dropdown |
+| **Requirement** | Notify User on assign; notify Admin on start/complete; list + mark-read APIs; open related task |
+| **Branch** | `feature/task-notifications` |
+| **Files created** | `Notification.cs`, `NotificationDtos.cs`, `NotificationRepository.cs`, `NotificationService.cs`, `NotificationsController.cs`, migration `AddNotifications`, `notifications.ts`, `NotificationBell.tsx`, `NotificationBell.test.tsx`, `NotificationsApiTests.cs`, `ai-prompts/10-stretch-task-notifications.md` |
+| **Files modified** | `AppDbContext.cs`, `TaskService.cs`, `Program.cs`, `Layout.tsx`, `types/index.ts`, `index.css`, docs / project-notes / cursor-workflow |
+| **Database changes** | `Notifications` table (id, recipientUserId, taskId, message, type, isRead, createdAt) |
+| **API changes** | `GET /api/notifications`, `GET /api/notifications/unread-count`, `PATCH /api/notifications/{id}/read`, `POST /api/notifications/read-all` |
+| **Frontend changes** | `NotificationBell` dropdown in topbar; unread badge; click → `/tasks/:id` |
+| **Testing added** | 7 backend + 4 frontend; backend 29/29, NotificationBell 4/4 |
+| **Cursor prompt summary** | Create branch and implement in-app notifications end-to-end |
+| **What AI suggested** | Server-side create in TaskService; poll unread count; notify all Admin roles |
+| **What was accepted** | Full implementation per requirements |
+| **What was rejected** | SignalR realtime (out of scope; polling used) |
+| **Suggested commit message** | `feat(notifications): add in-app task assignment and status alerts` |
+| **Status** | Complete — do not merge to dev/main yet |
+| **Date** | 2026-07-13 |
+
+---
+
 *Append new features below.*

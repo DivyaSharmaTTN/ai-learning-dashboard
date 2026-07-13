@@ -82,6 +82,7 @@
 | `Avatar` | Owner initials |
 | `Skeleton` / `DashboardSkeleton` | Loading placeholders (initial dashboard load only) |
 | `ThemeToggle` | Light/dark switch |
+| `NotificationBell` | Topbar bell dropdown; unread badge; mark read; navigate to task |
 
 ## Context
 
@@ -108,4 +109,4 @@
 
 ---
 
-*Last updated: 2026-07-09 — feature/stretch-filters-pagination*
+*Last updated: 2026-07-13 — feature/task-notifications*

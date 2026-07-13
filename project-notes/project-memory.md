@@ -127,12 +127,13 @@ ai-learning-dashboard/
 - Activity log: `ActivityLogs` table, audit API, task detail history panel (stretch)
 - Extended filters (priority, category) and paginated task list (stretch)
 - Git workflow rule canonicalized at `.cursor/rules/git-workflow.mdc` with append-only doc policy
+- In-app notifications (`feature/task-notifications`): assign → User; start/complete → Admin; bell dropdown
 
 ## Pending Work
 
 1. Manual end-to-end verification with both servers running
-2. Merge stretch and core feature branches → `dev`
-3. Remaining stretch features (auth, sorting, etc.)
+2. Merge stretch and core feature branches → `dev` (notifications branch not merged yet)
+3. Remaining stretch features (sorting, etc.)
 4. Commit workflow rule + stretch branches when ready
 
 ## Important Decisions
@@ -147,11 +148,13 @@ ai-learning-dashboard/
 | JWT auth stretch | `feature/stretch-auth-rbac`: BCrypt + Bearer JWT; Admin/User roles |
 | Canonical git-workflow rule | `.cursor/rules/git-workflow.mdc`; append-only docs on every change |
 | No auth (core) | Out of assessment scope; auth implemented as stretch on `feature/stretch-auth-rbac` |
+| Notifications ≠ ActivityLog | Recipient inbox needs isRead + recipientUserId; poll unread count |
 
 ## Design Trade-offs
 
 - Local component state vs React Query — chose simplicity for assessment
 - CSS variables vs UI library — lighter dependency footprint
+- Polling vs SignalR for notifications — polling for scope
 
 ## Known Issues
 
@@ -164,3 +167,4 @@ ai-learning-dashboard/
 - GitHub Actions CI
 - Sorting on task list
 - Refresh token / token rotation
+- Realtime notifications (SignalR)

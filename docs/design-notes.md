@@ -91,3 +91,16 @@ Allow `http://localhost:5173` in development.
 - Semantic HTML (`main`, `nav`, `button`, `label`)
 - Form labels associated with inputs
 - Loading states announced via `aria-busy` where practical
+
+---
+
+## History — 2026-07-13 — In-app notifications UI
+
+**Branch**: `feature/task-notifications`
+
+- Bell icon in topbar opens a glass-panel dropdown (`NotificationBell`)
+- Unread red dot only when unread count > 0
+- Clicking a row marks read and navigates to `/tasks/:id`
+- “Mark all read” action in dropdown header
+- Unread count polled every 30s (no SignalR)
+- Styles live in `index.css` under `.notification-*` classes

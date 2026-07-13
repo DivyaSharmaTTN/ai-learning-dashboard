@@ -80,4 +80,20 @@
 
 ---
 
-*Last updated: 2026-07-09 — auth UI review (User permissions + login redesign)*
+## 2026-07-13 — feature/task-notifications
+
+| Case | Covered By |
+|------|------------|
+| Assign → User notified | `CreateTask_AssignedToUser_NotifiesRecipient` |
+| Start → Admin notified | `UserStartsTask_NotifiesAdmin` |
+| Complete → Admin notified | `UserCompletesTask_NotifiesAdmin` |
+| Mark one / mark all read | `MarkAsRead_*`, `MarkAllAsRead_*` |
+| Cross-user mark-read forbid | `MarkAsRead_OtherUsersNotification_ReturnsForbid` |
+| Unauth notifications | `GetNotifications_Unauthenticated_ReturnsUnauthorized` |
+| Bell UI + navigate | `NotificationBell.test.tsx` (4 tests) |
+
+**Totals after this feature:** backend 29 passed; NotificationBell 4 passed.
+
+---
+
+*Last updated: 2026-07-13 — feature/task-notifications*

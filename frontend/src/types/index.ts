@@ -1,4 +1,6 @@
 /**
+ * @branch feature/task-notifications
+ * @history 2026-07-13 — Notification type for in-app inbox
  * @branch feature/stretch-filters-pagination
  * @history 2026-07-09 — ActivityLog type for audit history
  * @history 2026-07-09 — Extended TaskFilters and PagedTasks for pagination
@@ -7,6 +9,7 @@
 export type TaskPriority = 'Low' | 'Medium' | 'High';
 export type TaskStatus = 'NotStarted' | 'InProgress' | 'Completed';
 export type TaskCategory = 'Learning' | 'Project' | 'Certification' | 'Other';
+export type NotificationType = 'TaskAssigned' | 'TaskStarted' | 'TaskCompleted';
 
 export interface User {
   id: number;
@@ -75,4 +78,14 @@ export interface ActivityLog {
   newValue?: string | null;
   user: string;
   timestamp: string;
+}
+
+export interface Notification {
+  id: number;
+  recipientUserId: number;
+  taskId: number;
+  message: string;
+  type: NotificationType;
+  isRead: boolean;
+  createdAt: string;
 }

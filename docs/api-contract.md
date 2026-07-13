@@ -188,6 +188,66 @@ Update status only (quick actions).
 
 ---
 
+## Notifications
+
+> Added 2026-07-13 — `feature/task-notifications`
+
+### GET `/api/notifications`
+
+Returns the current user's notifications (newest first). Requires JWT.
+
+**Query parameters**
+
+| Param | Type | Description |
+|-------|------|-------------|
+| `unreadOnly` | bool | When `true`, return only unread items (optional) |
+
+**Response 200**
+
+```json
+[
+  {
+    "id": 1,
+    "recipientUserId": 5,
+    "taskId": 12,
+    "message": "A new task has been assigned to you.",
+    "type": "TaskAssigned",
+    "isRead": false,
+    "createdAt": "2026-07-13T10:00:00Z"
+  }
+]
+```
+
+**Types:** `TaskAssigned` | `TaskStarted` | `TaskCompleted`
+
+### GET `/api/notifications/unread-count`
+
+**Response 200**
+
+```json
+{ "count": 2 }
+```
+
+### PATCH `/api/notifications/{id}/read`
+
+Marks one notification as read for the current user.
+
+**Response 204** | **404** not found | **403** not recipient
+
+### POST `/api/notifications/read-all`
+
+Marks all of the current user's notifications as read.
+
+**Response 204**
+
+**Creation rules (server-side only)**
+
+- Admin creates/reassigns task → notify new owner: `"A new task has been assigned to you."`
+- Status → `InProgress` → notify all Admins: `"<User Name> started <Task Title>."`
+- Status → `Completed` → notify all Admins: `"<User Name> completed <Task Title>."`
+
+---
+
 ## Dashboard
 
 ### GET `/api/dashboard/summary`

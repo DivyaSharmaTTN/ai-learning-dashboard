@@ -1,3 +1,5 @@
+// @branch feature/task-notifications
+// @history 2026-07-13 — Emit assignment and status notifications from TaskService
 // @branch feature/stretch-filters-pagination
 // @history 2026-07-09 — Log Created, Updated, and StatusChanged events in TaskService
 // @history 2026-07-09 — Priority/category filters and paginated task list
@@ -19,7 +21,10 @@ public interface ITaskService
     Task<(TaskDto? Task, string? Error)> UpdateStatusAsync(int id, string status, string? actorName = null, CancellationToken cancellationToken = default);
 }
 
-public class TaskService(ITaskRepository taskRepository, IActivityLogService activityLogService) : ITaskService
+public class TaskService(
+    ITaskRepository taskRepository,
+    IActivityLogService activityLogService,
+    INotificationService notificationService) : ITaskService
 {
     public async Task<List<TaskDto>> GetAllAsync(TaskQueryDto query, int? ownerIdFilter = null, CancellationToken cancellationToken = default)
     {
@@ -123,6 +128,8 @@ public class TaskService(ITaskRepository taskRepository, IActivityLogService act
             user: withOwner.Owner?.Name ?? "System",
             cancellationToken);
 
+        await notificationService.NotifyTaskAssignedAsync(withOwner.OwnerId, withOwner.Id, cancellationToken);
+
         return (MapToDto(withOwner), null);
     }
 
@@ -141,6 +148,8 @@ public class TaskService(ITaskRepository taskRepository, IActivityLogService act
 
         var actor = existing.Owner?.Name ?? "System";
         var snapshots = CaptureSnapshot(existing);
+        var previousOwnerId = existing.OwnerId;
+        var previousStatus = existing.Status;
 
         existing.Title = dto.Title.Trim();
         existing.Description = dto.Description?.Trim() ?? string.Empty;
@@ -155,7 +164,25 @@ public class TaskService(ITaskRepository taskRepository, IActivityLogService act
         await LogFieldChangesAsync(id, snapshots, existing, actor, cancellationToken);
 
         var updated = await taskRepository.GetByIdAsync(id, cancellationToken);
-        return (updated is null ? null : MapToDto(updated), null);
+        if (updated is null)
+        {
+            return (null, null);
+        }
+
+        if (previousOwnerId != updated.OwnerId)
+        {
+            await notificationService.NotifyTaskAssignedAsync(updated.OwnerId, updated.Id, cancellationToken);
+        }
+
+        await NotifyStatusChangeIfNeededAsync(
+            previousStatus,
+            updated.Status,
+            actor,
+            updated.Title,
+            updated.Id,
+            cancellationToken);
+
+        return (MapToDto(updated), null);
     }
 
     public async Task<(TaskDto? Task, string? Error)> UpdateStatusAsync(int id, string status, string? actorName = null, CancellationToken cancellationToken = default)
@@ -166,28 +193,67 @@ public class TaskService(ITaskRepository taskRepository, IActivityLogService act
             return (null, "Task not found.");
         }
 
-        var previousStatus = existing.Status.ToString();
-        var newStatus = Enum.Parse<TaskStatus>(status, true).ToString();
-        if (previousStatus == newStatus)
+        var previousStatus = existing.Status;
+        var previousStatusName = previousStatus.ToString();
+        var newStatus = Enum.Parse<TaskStatus>(status, true);
+        var newStatusName = newStatus.ToString();
+        if (previousStatusName == newStatusName)
         {
             return (MapToDto(existing), null);
         }
 
-        existing.Status = Enum.Parse<TaskStatus>(status, true);
+        existing.Status = newStatus;
         existing.UpdatedAt = DateTime.UtcNow;
 
         await taskRepository.UpdateAsync(existing, cancellationToken);
 
+        var actor = actorName ?? existing.Owner?.Name ?? "System";
         await activityLogService.LogAsync(
             id,
             "StatusChanged",
-            previousValue: previousStatus,
-            newValue: newStatus,
-            user: actorName ?? existing.Owner?.Name ?? "System",
+            previousValue: previousStatusName,
+            newValue: newStatusName,
+            user: actor,
             cancellationToken);
 
         var updated = await taskRepository.GetByIdAsync(id, cancellationToken);
-        return (updated is null ? null : MapToDto(updated), null);
+        if (updated is null)
+        {
+            return (null, null);
+        }
+
+        await NotifyStatusChangeIfNeededAsync(
+            previousStatus,
+            updated.Status,
+            actor,
+            updated.Title,
+            updated.Id,
+            cancellationToken);
+
+        return (MapToDto(updated), null);
+    }
+
+    private async Task NotifyStatusChangeIfNeededAsync(
+        TaskStatus previousStatus,
+        TaskStatus newStatus,
+        string actorName,
+        string taskTitle,
+        int taskId,
+        CancellationToken cancellationToken)
+    {
+        if (previousStatus == newStatus)
+        {
+            return;
+        }
+
+        if (newStatus == TaskStatus.InProgress)
+        {
+            await notificationService.NotifyTaskStartedAsync(actorName, taskTitle, taskId, cancellationToken);
+        }
+        else if (newStatus == TaskStatus.Completed)
+        {
+            await notificationService.NotifyTaskCompletedAsync(actorName, taskTitle, taskId, cancellationToken);
+        }
     }
 
     private async Task LogFieldChangesAsync(

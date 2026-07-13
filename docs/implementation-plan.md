@@ -154,3 +154,17 @@ See `docs/test-strategy.md`.
 | 8 | feat(frontend): task form and detail | feature/task-form |
 | 9 | test(frontend): core flow tests | feature/testing |
 | 10 | docs: final submission updates | docs/final-submission |
+
+---
+
+## History — 2026-07-13 — feature/task-notifications
+
+| Step | Status |
+|------|--------|
+| Notification entity + migration | Done |
+| Repository / service / controller | Done |
+| TaskService hooks (assign, start, complete) | Done |
+| NotificationBell UI + API client | Done |
+| Backend + frontend tests | Done |
+| Docs / project-notes / prompts | Done |
+| Merge to dev/main | Deferred per request |

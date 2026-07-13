@@ -14,6 +14,14 @@ The **initial commit** (`413947a` — `Initial project setup`) exists on `main` 
 
 ### Added
 
+- **In-app task notifications** (`feature/task-notifications`) (2026-07-13)
+  - `Notifications` table and EF migration `AddNotifications`
+  - APIs: list, unread-count, mark one/all read
+  - Server-side create on assign / start / complete
+  - `NotificationBell` dropdown with unread badge and deep-link to task
+  - 7 backend + 4 frontend tests (backend suite 29 total)
+  - Prompt history: `ai-prompts/10-stretch-task-notifications.md`
+  - Not merged to `dev`/`main` yet
 - **Extended filters and pagination** (`feature/stretch-filters-pagination`) (2026-07-09)
   - Priority and category filters on task list (API + UI)
   - Paginated `GET /api/tasks?page=&pageSize=` with `PagedResultDto` response

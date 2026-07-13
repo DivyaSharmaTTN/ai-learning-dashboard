@@ -122,3 +122,16 @@
 | **Trade-off** | Users depend on Admin for new assignments |
 | **Impact** | Frontend hides create nav/actions for User; empty state says "Contact an admin" |
 | **Date** | 2026-07-09 |
+
+---
+
+## DL-010 — In-App Notifications Separate from ActivityLog
+
+| Field | Value |
+|-------|-------|
+| **Decision** | New `Notification` entity + inbox APIs; do not reuse `ActivityLog` |
+| **Why chosen** | ActivityLog is task-scoped audit with actor name string; notifications need recipient, isRead, and inbox queries |
+| **Alternative considered** | Derive inbox from ActivityLog; SignalR push |
+| **Trade-off** | Two related persistence paths; frontend polls unread count every 30s instead of realtime |
+| **Impact** | `TaskService` writes both activity and notifications on assign/status changes |
+| **Date** | 2026-07-13 |

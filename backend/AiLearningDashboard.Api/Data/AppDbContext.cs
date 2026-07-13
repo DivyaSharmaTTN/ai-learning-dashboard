@@ -1,3 +1,5 @@
+// @branch feature/task-notifications
+// @history 2026-07-13 — Notifications DbSet and relationships
 // @branch feature/stretch-auth-rbac
 // @history 2026-07-09 — JWT authentication, auth users seed, PasswordHash column
 
@@ -11,6 +13,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<User> Users => Set<User>();
     public DbSet<ProjectTask> ProjectTasks => Set<ProjectTask>();
     public DbSet<ActivityLog> ActivityLogs => Set<ActivityLog>();
+    public DbSet<Notification> Notifications => Set<Notification>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -52,6 +55,26 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                 .OnDelete(DeleteBehavior.Cascade);
 
             entity.HasIndex(l => l.TaskId);
+        });
+
+        modelBuilder.Entity<Notification>(entity =>
+        {
+            entity.HasKey(n => n.Id);
+            entity.Property(n => n.Message).IsRequired().HasMaxLength(500);
+            entity.Property(n => n.Type).IsRequired().HasMaxLength(50);
+
+            entity.HasOne(n => n.Recipient)
+                .WithMany()
+                .HasForeignKey(n => n.RecipientUserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(n => n.Task)
+                .WithMany()
+                .HasForeignKey(n => n.TaskId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasIndex(n => n.RecipientUserId);
+            entity.HasIndex(n => new { n.RecipientUserId, n.IsRead });
         });
 
         SeedUsers(modelBuilder);

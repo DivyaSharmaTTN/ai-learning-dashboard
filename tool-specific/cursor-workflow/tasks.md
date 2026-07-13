@@ -107,6 +107,17 @@ Git workflow established. UI overhaul on `feature/modern-ai-dashboard-ui`.
 - [x] `ai-prompts/08-auth-rbac.md` and project notes updated
 - [ ] Merge `feature/stretch-auth-rbac` → `dev` (not merged per user request)
 
+## Stretch: Task Notifications (2026-07-13)
+
+- [x] `Notification` entity + migration `AddNotifications`
+- [x] `NotificationRepository` + `NotificationService`
+- [x] Emit on assign / start / complete from `TaskService`
+- [x] `GET/PATCH/POST` notification APIs
+- [x] `NotificationBell` dropdown in `Layout`
+- [x] Backend 7 + frontend 4 tests (29 backend total)
+- [x] Docs / project-notes / ai-prompts / cursor-workflow updated
+- [ ] Merge `feature/task-notifications` → `dev` (not merged per user request)
+
 ---
 
 ## Session 1 Notes

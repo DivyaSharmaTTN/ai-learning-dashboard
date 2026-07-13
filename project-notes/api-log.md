@@ -118,3 +118,41 @@
 - **Response 200**: `{ totalItems, completedItems, inProgressItems, overdueItems, highPriorityItems }`
 - **Overdue rule**: `dueDate.Date < UtcNow.Date && status != Completed`
 - **Used by**: `SummaryCards`, `DashboardPage` (Admin only)
+
+---
+
+## Notifications (2026-07-13 — feature/task-notifications)
+
+### GET `/api/notifications`
+
+- **Purpose**: List current user's notifications (newest first)
+- **Auth**: Any authenticated user
+- **Query**: `unreadOnly` (optional bool)
+- **Response 200**: `NotificationDto[]`
+- **Used by**: `NotificationBell`
+
+### GET `/api/notifications/unread-count`
+
+- **Purpose**: Badge count for bell icon
+- **Auth**: Any authenticated user
+- **Response 200**: `{ count }`
+- **Used by**: `NotificationBell`
+
+### PATCH `/api/notifications/{id}/read`
+
+- **Purpose**: Mark one notification as read
+- **Auth**: Recipient only (403 otherwise)
+- **Response 204** | **404** | **403**
+- **Used by**: `NotificationBell` on item click
+
+### POST `/api/notifications/read-all`
+
+- **Purpose**: Mark all current-user notifications as read
+- **Auth**: Any authenticated user
+- **Response 204**
+- **Used by**: `NotificationBell` “Mark all read”
+
+### Creation (internal)
+
+- Triggered from `TaskService` on assign / status → InProgress / status → Completed
+- Not exposed as a public create endpoint

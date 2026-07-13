@@ -131,3 +131,31 @@ Each criterion maps to a testable outcome for the assessment submission.
 ### AC-20: Docs Match Code
 
 - API contract, project memory, and component docs reflect current implementation
+
+---
+
+## In-App Notifications (2026-07-13 — feature/task-notifications)
+
+### AC-21: Task Assigned Notification
+
+- **Given** an Admin assigns a task to a User
+- **When** the User opens the notification bell
+- **Then** they see “A new task has been assigned to you.”
+
+### AC-22: Status Change Notifications to Admin
+
+- **Given** a User starts or completes an assigned task
+- **When** the Admin opens the notification bell
+- **Then** they see “\<User Name\> started \<Task Title\>.” or “\<User Name\> completed \<Task Title\>.”
+
+### AC-23: Notification Persistence and Read State
+
+- **Given** notifications exist in the database
+- **When** the user marks one or all as read
+- **Then** unread badge updates and state survives API restart
+
+### AC-24: Open Related Task
+
+- **Given** a notification in the bell dropdown
+- **When** the user clicks it
+- **Then** the app navigates to `/tasks/{taskId}` and the item is marked read
